@@ -41,9 +41,9 @@ async function fetchFixturesByLeague(
 			'x-rapidapi-key': API_KEY,
 			'x-rapidapi-host': 'v3.football.api-sports.io',
 		},
-		next: {
-			revalidate: 60 * 60 * 24,
-		},
+		// next: {
+		// 	revalidate: 60 * 60 * 24,
+		// },
 	}
 
 	try {
