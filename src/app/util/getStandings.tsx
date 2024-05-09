@@ -21,7 +21,7 @@ export default async function getStandings(): Promise<Standing[]> {
 			'x-rapidapi-host': 'v3.football.api-sports.io',
 		},
 		next: {
-			revalidate: 60 * 60 * 24,
+			revalidate: 60 * 60 * 3,
 		},
 	}
 
