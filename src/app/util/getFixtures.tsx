@@ -62,48 +62,49 @@ async function fetchFixturesByLeague(
 }
 
 export default async function getFixtures(): Promise<AllFixtures[]> {
-	try {
-		const currentTime = moment()
-		const year = currentTime.year()
-		const month = currentTime.month()
+	return []
+	// try {
+	// 	const currentTime = moment()
+	// 	const year = currentTime.year()
+	// 	const month = currentTime.month()
 
-		const allFixturesByLeague: AllFixtures[] = []
+	// 	const allFixturesByLeague: AllFixtures[] = []
 
-		for (const league of leagues) {
-			if (month <= 5) {
-				allFixturesByLeague.push({
-					name: league.name,
-					fixtures: await fetchFixturesByLeague(year - 1, league.league),
-				})
-			} else if (month >= 8) {
-				allFixturesByLeague.push({
-					name: league.name,
-					fixtures: await fetchFixturesByLeague(year, league.league),
-				})
-			} else {
-				allFixturesByLeague.push({
-					name: league.name,
-					fixtures: await fetchFixturesByLeague(year - 1, league.league),
-				})
-				const existingData = allFixturesByLeague.find(
-					(data) => data.name === league.name,
-				)
-				if (existingData) {
-					existingData.fixtures.push(
-						...(await fetchFixturesByLeague(year, league.league)),
-					)
-				} else {
-					allFixturesByLeague.push({
-						name: league.name,
-						fixtures: await fetchFixturesByLeague(year, league.league),
-					})
-				}
-			}
-		}
+	// 	for (const league of leagues) {
+	// 		if (month <= 5) {
+	// 			allFixturesByLeague.push({
+	// 				name: league.name,
+	// 				fixtures: await fetchFixturesByLeague(year - 1, league.league),
+	// 			})
+	// 		} else if (month >= 8) {
+	// 			allFixturesByLeague.push({
+	// 				name: league.name,
+	// 				fixtures: await fetchFixturesByLeague(year, league.league),
+	// 			})
+	// 		} else {
+	// 			allFixturesByLeague.push({
+	// 				name: league.name,
+	// 				fixtures: await fetchFixturesByLeague(year - 1, league.league),
+	// 			})
+	// 			const existingData = allFixturesByLeague.find(
+	// 				(data) => data.name === league.name,
+	// 			)
+	// 			if (existingData) {
+	// 				existingData.fixtures.push(
+	// 					...(await fetchFixturesByLeague(year, league.league)),
+	// 				)
+	// 			} else {
+	// 				allFixturesByLeague.push({
+	// 					name: league.name,
+	// 					fixtures: await fetchFixturesByLeague(year, league.league),
+	// 				})
+	// 			}
+	// 		}
+	// 	}
 
-		return allFixturesByLeague
-	} catch (error) {
-		console.error('An error occured while fetching fixtures: ', error)
-		throw error
-	}
+	// 	return allFixturesByLeague
+	// } catch (error) {
+	// 	console.error('An error occured while fetching fixtures: ', error)
+	// 	throw error
+	// }
 }

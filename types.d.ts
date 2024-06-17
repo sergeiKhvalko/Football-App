@@ -1,34 +1,29 @@
+interface StandingLeagues {
+	[key: number]: Standing
+}
+
 type Standing = {
 	league: League
 }
 
 type League = {
 	id: number
-	name: string
 	country: string
-	logo: string
 	flag: string
+	name: string
+	logo: string
 	season: number
-	standings: [oneTeam[]]
+	standings: oneTeam[]
 }
 
 type oneTeam = {
-	rank: number
-	team: {
-		id: number
-		name: string
-		logo: string
-	}
-	points: number
-	goalsDiff: number
-	group: string
-	form: string
-	status: string
-	description: string
-	all: Games
+	id: number
+	name: string
 	home: Games
 	away: Games
-	update: string
+	all: Games
+	points: number
+	form: string
 }
 
 type Games = {
@@ -36,10 +31,9 @@ type Games = {
 	win: number
 	draw: number
 	lose: number
-	goals: {
-		for: number
-		against: number
-	}
+	goals_for: number
+	goals_against: number
+	goals_diff: number
 }
 
 // Fixtures
@@ -116,4 +110,4 @@ type AllFixtures = {
 	fixtures: Fixture[]
 }
 
-export { Standing, oneTeam, AllFixtures, Fixture }
+export { StandingLeagues, Standing, oneTeam, AllFixtures, Fixture }

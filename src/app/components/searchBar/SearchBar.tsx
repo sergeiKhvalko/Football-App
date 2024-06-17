@@ -3,7 +3,7 @@ import getTeams from '@/src/app/util/getTeams'
 import { oneTeam } from '@/types'
 
 export default async function SearchBar() {
-	let teamsData: oneTeam[] = await getTeams()
+	// let teamsData: oneTeam[] = await getTeams()
 
 	return (
 		<div className="flex justify-center items-center w-full p-3 bg-black/40">
@@ -20,7 +20,7 @@ export default async function SearchBar() {
 				</a>
 			</div>
 			<div className="w-4/6 flex justify-center items-center">
-				<SearchBarForm teamsData={teamsData} />
+				{/* <SearchBarForm teamsData={teamsData} /> */}
 			</div>
 			<div className="w-1/6"></div>
 		</div>

@@ -4,53 +4,24 @@ import Link from 'next/link'
 import { useEffect, useRef, useState } from 'react'
 import FixturesByLeague from './FixturesByLeague'
 import Image from 'next/image'
+// import { standings } from '../../data/standingsData'
+import moment from 'moment'
+import { StandingLeagues } from '@/types'
 
 export default function StandingsAndFixtures({
 	standingsData,
 	filteredFixtures,
 }: {
-	standingsData: Standing[]
+	standingsData: StandingLeagues[]
 	filteredFixtures: AllFixtures[]
 }) {
-	const menuItems = [
-		{
-			name: 'RPL',
-			logo: 'https://media.api-sports.io/football/leagues/235.png',
-			flag: 'ru',
-		},
-		{
-			name: 'EPL',
-			logo: 'https://media.api-sports.io/football/leagues/39.png',
-			flag: 'gb',
-		},
-		// {
-		// 	name: 'Championship',
-		// 	logo: 'https://media.api-sports.io/football/leagues/40.png',
-		// 	flag: 'gb',
-		// },
-		{
-			name: 'BundesLiga',
-			logo: 'https://media.api-sports.io/football/leagues/78.png',
-			flag: 'de',
-		},
-		{
-			name: 'Serie A',
-			logo: 'https://media.api-sports.io/football/leagues/135.png',
-			flag: 'it',
-		},
-		{
-			name: 'La Liga',
-			logo: 'https://media.api-sports.io/football/leagues/140.png',
-			flag: 'es',
-		},
-		{
-			name: 'Ligue 1',
-			logo: 'https://media.api-sports.io/football/leagues/61.png',
-			flag: 'fr',
-		},
-	]
+	console.log(standingsData)
 
+	const currentTime = moment()
+	const countSeasons = Object.keys(standingsData[0]).length - 1
+	const [year, setYear] = useState(currentTime.year() - 1)
 	const [activeTab, setActiveTab] = useState(0)
+	const [activeTabYears, setActiveTabYears] = useState(countSeasons)
 	const menuRef = useRef<HTMLDivElement>(null)
 
 	const scrollToTab = (index: number) => {
@@ -68,6 +39,11 @@ export default function StandingsAndFixtures({
 	const handleTabClick = (index: number) => {
 		setActiveTab(index)
 		scrollToTab(index)
+	}
+
+	const handleTabClickYear = (index: number, year: number) => {
+		setYear(year)
+		setActiveTabYears(index)
 	}
 
 	useEffect(() => {
@@ -95,22 +71,34 @@ export default function StandingsAndFixtures({
 				<div className="flex flex-col justify-center items-center bg-gradient-to-b from-black/40 w-full text-neutral-100 rounded-3xl">
 					<div className="flex flex-col w-full justify-center items-center">
 						<div className="p-2 font-bold">STANDING</div>
-						<div className="flex justify-center w-full">
-							{menuItems.map((item, i) => (
+						<div className="flex justify-start w-full gap-2 overflow-x-auto">
+							{standingsData.map((item, i) => (
 								<button
-									key={item.name}
-									className={`w-full flex justify-center items-center p-4 rounded-t-lg bg-${
-										item.flag
+									key={i}
+									className={`flex justify-center items-center shrink-0 p-4 rounded-lg bg-${
+										item[year].league.flag
 									}
 								${i === activeTab ? 'opacity-100' : 'bg-black/100 opacity-50'}`}
 									onClick={() => handleTabClick(i)}
 								>
 									<Image
-										src={item.logo}
+										src={item[year].league.logo}
 										alt="teamLogo"
 										width={70}
 										height={60}
 									/>
+								</button>
+							))}
+						</div>
+						<div className="flex justify-center w-full gap-2">
+							{Object.keys(standingsData[0]).map((season, j) => (
+								<button
+									key={j}
+									className={`mt-3 w-full flex justify-center items-center p-4 rounded-t-lg bg-red
+										${j === activeTabYears ? 'opacity-100' : 'bg-black/100 opacity-50'}`}
+									onClick={() => handleTabClickYear(j, +season)}
+								>
+									{season}
 								</button>
 							))}
 						</div>
@@ -139,11 +127,12 @@ export default function StandingsAndFixtures({
 											</div>
 											<div className="w-2/12 text-center">Form</div>
 										</div>
-										{responseData.league &&
-											responseData.league.standings[0].map((team, j) => (
+										{responseData[year].league &&
+											responseData[year].league.standings.length &&
+											responseData[year].league.standings.map((team, j) => (
 												<Link
-													href={`/team/${team.team.id}`}
-													key={team.team.id}
+													href={`/team/${team.id}`}
+													key={team.id}
 													className={`flex w-full p-1 hover:bg-red-800/50
 											${j % 2 === 0 ? 'bg-black/40' : ''}`}
 												>
@@ -151,7 +140,7 @@ export default function StandingsAndFixtures({
 														{j + 1}
 													</div>
 													<div className="flex items-center w-3/12 text-xs md:text-base lg:text-lg">
-														{team.team.name}
+														{team.name}
 													</div>
 													<div className="flex justify-center items-center w-6/12">
 														<div className="w-full text-center">
@@ -170,20 +159,23 @@ export default function StandingsAndFixtures({
 															{team.points}
 														</div>
 														<div className="w-full text-center">
-															{team.all.goals.for}
+															{team.all.goals_for}
 														</div>
 														<div className="w-full text-center">
-															{team.all.goals.against}
+															{team.all.goals_against}
 														</div>
 														<div className="w-full text-center">
-															{team.goalsDiff}
+															{team.all.goals_diff}
 														</div>
 													</div>
 													<div className="w-2/12 flex justify-center items-center">
-														{team.form?.split('').map((char, i) => (
-															<div
-																key={char + i}
-																className={`opacity-80 w-5 h-5 m-[1px] flex justify-center items-center font-bold
+														{team.form
+															?.split('')
+															.slice(-5)
+															.map((char, i) => (
+																<div
+																	key={char + i}
+																	className={`opacity-80 w-5 h-5 m-[1px] flex justify-center items-center font-bold
                               ${
 																char === 'L'
 																	? 'bg-red-500'
@@ -191,10 +183,10 @@ export default function StandingsAndFixtures({
 																	? 'bg-gray-500'
 																	: 'bg-green-500'
 															}`}
-															>
-																{char}
-															</div>
-														))}
+																>
+																	{char}
+																</div>
+															))}
 													</div>
 												</Link>
 											))}
@@ -210,11 +202,14 @@ export default function StandingsAndFixtures({
 					<div className="w-full flex flex-col justify-center items-center">
 						<div className="p-2 font-bold">Upcoming Matches</div>
 						<div className="w-full h-[77vh] flex flex-col justify-start items-center pb-5 overflow-y-auto">
-							{menuItems.map((leagueName, i) => {
+							{standingsData.map((leagueName, i) => {
 								return (
 									activeTab === i &&
 									filteredFixtures.map((league, j) => {
-										if (league.name === leagueName.name) {
+										if (
+											league.name ===
+											leagueName[currentTime.year() - 1].league.name
+										) {
 											return (
 												<FixturesByLeague
 													fixturesData={league.fixtures}

@@ -8,7 +8,7 @@ export const revalidate = 60
 export default async function Home() {
 	const standingsData: Standing[] = await getStandings()
 	const filteredFixtures: AllFixtures[] = await getFixturesForSevenLeagues()
-	// console.log(standingsData.length)
+	console.log(standingsData.length)
 	// console.log(filteredFixtures.length)
 
 	// if (!standingsData?.length || !filteredFixtures?.length) return null
