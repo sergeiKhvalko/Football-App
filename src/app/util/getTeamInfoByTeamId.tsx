@@ -9,7 +9,7 @@ export default async function getTeamInfoByTeamId(
 		const teams: oneTeam[] = await getTeams()
 
 		for (const team of teams) {
-			if (team.team.id === id) {
+			if (team.id === id) {
 				return team
 			}
 		}

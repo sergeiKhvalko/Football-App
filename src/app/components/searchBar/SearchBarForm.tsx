@@ -12,7 +12,7 @@ export default function SearchBarForm({ teamsData }: { teamsData: oneTeam[] }) {
 	let router = useRouter()
 
 	const filteredTeams = teamsData.filter((team) =>
-		team.team.name.toLowerCase().includes(searchTerm.toLowerCase()),
+		team.name.toLowerCase().includes(searchTerm.toLowerCase()),
 	)
 
 	const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -40,7 +40,7 @@ export default function SearchBarForm({ teamsData }: { teamsData: oneTeam[] }) {
 			)
 		} else if (event.key === 'Enter') {
 			if (focusedIndex !== -1) {
-				const teamId = filteredTeams[focusedIndex].team.id
+				const teamId = filteredTeams[focusedIndex].id
 				router.push(`/team/${teamId}`)
 				setSearchTerm('')
 			}
@@ -90,14 +90,14 @@ export default function SearchBarForm({ teamsData }: { teamsData: oneTeam[] }) {
 				>
 					{filteredTeams.slice(0, 10).map((standing, i) => (
 						<Link
-							href={`/team/${standing.team.id}`}
-							key={standing.team.id}
+							href={`/team/${standing.id}`}
+							key={standing.id}
 							className={`p-2 text-neutral-100 ${
 								i === focusedIndex ? 'bg-neutral-100/40' : ''
 							}`}
 							onClick={() => handleTeamItemClick()}
 						>
-							{standing.team.name}
+							{standing.name}
 						</Link>
 					))}
 				</div>

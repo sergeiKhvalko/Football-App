@@ -12,14 +12,14 @@ export default function StandingsAndFixtures({
 	standingsData,
 	filteredFixtures,
 }: {
-	standingsData: StandingLeagues[]
+	standingsData: Standing[][]
 	filteredFixtures: AllFixtures[]
 }) {
-	console.log(standingsData)
+	console.log(standingsData[0][4])
 
 	const currentTime = moment()
-	const countSeasons = Object.keys(standingsData[0]).length - 1
-	const [year, setYear] = useState(currentTime.year() - 1)
+	const countSeasons = standingsData[0].length - 1
+	const [year, setYear] = useState(0)
 	const [activeTab, setActiveTab] = useState(0)
 	const [activeTabYears, setActiveTabYears] = useState(countSeasons)
 	const menuRef = useRef<HTMLDivElement>(null)
@@ -44,6 +44,7 @@ export default function StandingsAndFixtures({
 	const handleTabClickYear = (index: number, year: number) => {
 		setYear(year)
 		setActiveTabYears(index)
+		console.log(year)
 	}
 
 	useEffect(() => {
@@ -91,16 +92,23 @@ export default function StandingsAndFixtures({
 							))}
 						</div>
 						<div className="flex justify-center w-full gap-2">
-							{Object.keys(standingsData[0]).map((season, j) => (
-								<button
-									key={j}
-									className={`mt-3 w-full flex justify-center items-center p-4 rounded-t-lg bg-red
+							{standingsData[0]
+								.map((item, index, array) => array[array.length - 1 - index])
+								.map((season, j) => (
+									<button
+										key={j}
+										className={`mt-3 w-full flex justify-center items-center p-4 rounded-t-lg bg-red
 										${j === activeTabYears ? 'opacity-100' : 'bg-black/100 opacity-50'}`}
-									onClick={() => handleTabClickYear(j, +season)}
-								>
-									{season}
-								</button>
-							))}
+										onClick={() =>
+											handleTabClickYear(
+												j,
+												currentTime.year() - 1 - season.league.season,
+											)
+										}
+									>
+										{season.league.season}
+									</button>
+								))}
 						</div>
 						<div
 							ref={menuRef}
@@ -169,12 +177,13 @@ export default function StandingsAndFixtures({
 														</div>
 													</div>
 													<div className="w-2/12 flex justify-center items-center">
-														{team.form
+														{team.form.result
 															?.split('')
 															.slice(-5)
 															.map((char, i) => (
 																<div
 																	key={char + i}
+																	title={team.form.info.slice(-5)[i]}
 																	className={`opacity-80 w-5 h-5 m-[1px] flex justify-center items-center font-bold
                               ${
 																char === 'L'
@@ -206,10 +215,7 @@ export default function StandingsAndFixtures({
 								return (
 									activeTab === i &&
 									filteredFixtures.map((league, j) => {
-										if (
-											league.name ===
-											leagueName[currentTime.year() - 1].league.name
-										) {
+										if (league.name === leagueName[year].league.name) {
 											return (
 												<FixturesByLeague
 													fixturesData={league.fixtures}

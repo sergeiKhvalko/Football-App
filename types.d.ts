@@ -23,7 +23,10 @@ type oneTeam = {
 	away: Games
 	all: Games
 	points: number
-	form: string
+	form: {
+		result: string
+		info: Array<string>
+	}
 }
 
 type Games = {

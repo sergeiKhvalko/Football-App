@@ -2,13 +2,11 @@ import moment from 'moment'
 import { AllFixtures } from '@/types'
 import getFixtures from './getFixtures'
 
-export default async function getFixturesForSevenLeagues(): Promise<
-	AllFixtures[]
-> {
+export default async function getFixturesForLeagues(): Promise<AllFixtures[]> {
 	try {
 		const allFixturesByLeague = await getFixtures()
 
-		const fixturesForSevenLeague: AllFixtures[] = []
+		const fixturesLeague: AllFixtures[] = []
 		for (const league of allFixturesByLeague) {
 			if (
 				league.name === 'RPL' ||
@@ -19,23 +17,21 @@ export default async function getFixturesForSevenLeagues(): Promise<
 				league.name === 'La Liga' ||
 				league.name === 'Ligue 1'
 			) {
-				fixturesForSevenLeague.push(league)
+				fixturesLeague.push(league)
 			}
 		}
 
-		const filteredFixtures: AllFixtures[] = fixturesForSevenLeague.filter(
-			(league) => {
-				league.fixtures = league.fixtures
-					.filter((fixture) => {
-						return moment(fixture.fixture.date).isAfter(
-							moment().subtract(1, 'day'),
-							'day',
-						)
-					})
-					.slice(0, 20)
-				return league.fixtures.length > 0
-			},
-		)
+		const filteredFixtures: AllFixtures[] = fixturesLeague.filter((league) => {
+			league.fixtures = league.fixtures
+				.filter((fixture) => {
+					return moment(fixture.fixture.date).isAfter(
+						moment().subtract(1, 'day'),
+						'day',
+					)
+				})
+				.slice(0, 20)
+			return league.fixtures.length > 0
+		})
 
 		return filteredFixtures
 	} catch (error) {

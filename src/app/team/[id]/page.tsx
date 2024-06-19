@@ -34,27 +34,30 @@ export default async function Team({ params }: PageProps) {
 					className="flex flex-col md:w-1/3 justify-center items-center
                 bg-gradient-to-r from-black/60 to-sky-800/80 h-[500px]"
 				>
-					<Image
-						src={teamInfo.team.logo}
+					{/* <Image
+						src={teamInfo.logo}
 						alt="TeamLogo"
 						width={150}
 						height={150}
 						className="p-3"
-					/>
-					<div className="text-2xl">{teamInfo.team.name}</div>
+					/> */}
+					<div className="text-2xl">{teamInfo.name}</div>
 					<div className="flex justify-center items-center w-full">
-						<div className="w-1/3 text-center text-2xl">#{teamInfo.rank}</div>
-						<div className="w-1/3 text-center">{teamInfo.group}</div>
+						{/* <div className="w-1/3 text-center text-2xl">#{teamInfo.rank}</div>
+						<div className="w-1/3 text-center">{teamInfo.group}</div> */}
 						<div className="w-1/3 flex flex-col justify-center items-center">
 							<div className="text-center">Form</div>
 							<div className="flex justify-center items-center">
-								{teamInfo.form?.split('').map((char, i) => (
-									<div
-										key={char + i}
-										className={`opacity-80 w-3 h-3 lg:w-4 lg:h-4 m-1 font-bold
+								{teamInfo.form.result
+									.split('')
+									.slice(-5)
+									.map((char, i) => (
+										<div
+											key={char + i}
+											className={`opacity-80 w-3 h-3 lg:w-4 lg:h-4 m-1 font-bold
 											${char === 'L' ? 'bg-red-500' : char === 'D' ? 'bg-gray-500' : 'bg-green-500'}`}
-									/>
-								))}
+										/>
+									))}
 							</div>
 						</div>
 					</div>
@@ -77,11 +80,13 @@ export default async function Team({ params }: PageProps) {
 							<div className="w-full text-center">{teamInfo.all.win}</div>
 							<div className="w-full text-center">{teamInfo.all.draw}</div>
 							<div className="w-full text-center">{teamInfo.all.lose}</div>
-							<div className="w-full text-center">{teamInfo.all.goals.for}</div>
+							<div className="w-full text-center">{teamInfo.all.goals_for}</div>
 							<div className="w-full text-center">
-								{teamInfo.all.goals.against}
+								{teamInfo.all.goals_against}
 							</div>
-							<div className="w-full text-center">{teamInfo.goalsDiff}</div>
+							<div className="w-full text-center">
+								{teamInfo.all.goals_diff}
+							</div>
 						</div>
 					</div>
 				</div>

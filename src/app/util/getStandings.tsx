@@ -1,7 +1,7 @@
-import { Standing } from '@/types'
+import { Standing, StandingLeagues } from '@/types'
 import moment from 'moment'
 
-export default async function getStandings(): Promise<Standing[]> {
+export default async function getStandings(): Promise<Standing[][]> {
 	const currentTime = moment()
 	const month = currentTime.month()
 	let year: number
@@ -25,8 +25,8 @@ export default async function getStandings(): Promise<Standing[]> {
 	// 	},
 	// }
 
-	// const standings: Standing[] = []
-	const standings: any = []
+	const standings: Standing[][] = []
+	// const standings: any = []
 
 	const leagues = [
 		{ name: 'RPL', id: 235 },
@@ -50,7 +50,7 @@ export default async function getStandings(): Promise<Standing[]> {
 	]
 
 	for (let league of leagues) {
-		const standing: any = {}
+		const seasons: Standing[] = []
 		for (let i = year; i > year - 5; i--) {
 			const url = `http://127.0.0.1:8000/standings?season=${i}&league=${league.id}`
 
@@ -58,12 +58,12 @@ export default async function getStandings(): Promise<Standing[]> {
 				const response = await fetch(url)
 				const data = await response.json()
 
-				standing[i] = data.response[0]
+				seasons.push(data.response[0])
 			} catch (err) {
 				console.error(`Error fetching ${league.name} standings: ${err}`)
 			}
 		}
-		standings.push(standing)
+		standings.push(seasons)
 	}
 
 	// const standing: any = {}
