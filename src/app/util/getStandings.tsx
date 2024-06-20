@@ -30,7 +30,7 @@ export default async function getStandings(): Promise<Standing[][]> {
 
 	const leagues = [
 		{ name: 'RPL', id: 235 },
-		// { name: 'EPL', id: 39 },
+		{ name: 'EPL', id: 39 },
 		// { name: 'Championship', id: 40 },
 		// { name: 'BundesLiga', id: 78 },
 		// { name: '2BundesLiga', id: 79 },

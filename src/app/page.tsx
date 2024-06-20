@@ -10,7 +10,7 @@ export default async function Home() {
 	const filteredFixtures: AllFixtures[] = await getFixturesForLeagues()
 	console.log(standingsData.length)
 	console.log(standingsData[0][0].league.standings[0].points)
-	// console.log(filteredFixtures.length)
+	console.log(filteredFixtures.length)
 
 	// if (!standingsData?.length || !filteredFixtures?.length) return null
 

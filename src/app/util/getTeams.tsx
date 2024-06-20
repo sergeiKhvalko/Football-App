@@ -6,6 +6,7 @@ export default async function getTeams(): Promise<oneTeam[]> {
 	try {
 		const standings: Standing[][] = await getStandings()
 		const teams: oneTeam[] = []
+		console.log(standings)
 
 		for (const seasons of standings) {
 			for (const team of seasons[0].league.standings) {
