@@ -4,9 +4,7 @@ import Link from 'next/link'
 import { useEffect, useRef, useState } from 'react'
 import FixturesByLeague from './FixturesByLeague'
 import Image from 'next/image'
-// import { standings } from '../../data/standingsData'
 import moment from 'moment'
-import { StandingLeagues } from '@/types'
 
 export default function StandingsAndFixtures({
 	standingsData,
