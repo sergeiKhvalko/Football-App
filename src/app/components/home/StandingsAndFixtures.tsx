@@ -13,8 +13,6 @@ export default function StandingsAndFixtures({
 	standingsData: Standing[][]
 	filteredFixtures: AllFixtures[]
 }) {
-	console.log(standingsData[0][4])
-
 	const currentTime = moment()
 	const countSeasons = standingsData[0].length - 1
 	const [year, setYear] = useState(0)
@@ -42,7 +40,6 @@ export default function StandingsAndFixtures({
 	const handleTabClickYear = (index: number, year: number) => {
 		setYear(year)
 		setActiveTabYears(index)
-		console.log(year)
 	}
 
 	useEffect(() => {

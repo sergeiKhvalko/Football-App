@@ -5,9 +5,9 @@ const API_KEY = process.env.API_KEY as string
 
 const leagues = [
 	{ league: 235, name: 'RPL' },
-	{ league: 39, name: 'EPL' },
+	{ league: 39, name: 'Premier League' },
 	// { league: 40, name: 'Championship' },
-	// { league: 78, name: 'BundesLiga' },
+	{ league: 78, name: 'BundesLiga' },
 	// { league: 135, name: 'Serie A' },
 	// { league: 140, name: 'La Liga' },
 	// { league: 61, name: 'Ligue 1' },
@@ -50,6 +50,7 @@ async function fetchFixturesByLeague(
 		const response = await fetch(url, options)
 		const data = await response.json()
 		const fixtures: Fixture[] = data.response
+
 		if (fixtures === null || fixtures === undefined) {
 			return []
 		} else {
@@ -62,7 +63,6 @@ async function fetchFixturesByLeague(
 }
 
 export default async function getFixtures(): Promise<AllFixtures[]> {
-	// return []
 	try {
 		const currentTime = moment()
 		const year = currentTime.year()
@@ -71,7 +71,7 @@ export default async function getFixtures(): Promise<AllFixtures[]> {
 		const allFixturesByLeague: AllFixtures[] = []
 
 		for (const league of leagues) {
-			if (month <= 5) {
+			if (month <= 4) {
 				allFixturesByLeague.push({
 					name: league.name,
 					fixtures: await fetchFixturesByLeague(year - 1, league.league),
@@ -89,6 +89,7 @@ export default async function getFixtures(): Promise<AllFixtures[]> {
 				const existingData = allFixturesByLeague.find(
 					(data) => data.name === league.name,
 				)
+
 				if (existingData) {
 					existingData.fixtures.push(
 						...(await fetchFixturesByLeague(year, league.league)),

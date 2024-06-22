@@ -1,4 +1,4 @@
-import { Standing, StandingLeagues } from '@/types'
+import { Standing } from '@/types'
 import moment from 'moment'
 
 export default async function getStandings(): Promise<Standing[][]> {
@@ -32,7 +32,7 @@ export default async function getStandings(): Promise<Standing[][]> {
 		{ name: 'RPL', id: 235 },
 		{ name: 'EPL', id: 39 },
 		// { name: 'Championship', id: 40 },
-		// { name: 'BundesLiga', id: 78 },
+		{ name: 'BundesLiga', id: 78 },
 		// { name: '2BundesLiga', id: 79 },
 		// { name: 'Serie A', id: 135 },
 		// { name: 'Serie B', id: 136 },
