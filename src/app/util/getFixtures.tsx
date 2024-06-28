@@ -8,8 +8,8 @@ const leagues = [
 	{ league: 39, name: 'Premier League' },
 	// { league: 40, name: 'Championship' },
 	{ league: 78, name: 'BundesLiga' },
-	// { league: 135, name: 'Serie A' },
-	// { league: 140, name: 'La Liga' },
+	{ league: 135, name: 'Serie A' },
+	{ league: 140, name: 'La Liga' },
 	// { league: 61, name: 'Ligue 1' },
 	// { league: 2, name: 'Champions League' },
 	// { league: 3, name: 'Europa League' },
@@ -82,24 +82,27 @@ export default async function getFixtures(): Promise<AllFixtures[]> {
 					fixtures: await fetchFixturesByLeague(year, league.league),
 				})
 			} else {
+				// allFixturesByLeague.push({
+				// 	name: league.name,
+				// 	fixtures: await fetchFixturesByLeague(year - 1, league.league),
+				// })
+				// const existingData = allFixturesByLeague.find(
+				// 	(data) => data.name === league.name,
+				// )
+				// if (existingData) {
+				// 	existingData.fixtures.push(
+				// 		...(await fetchFixturesByLeague(year, league.league)),
+				// 	)
+				// } else {
+				// 	allFixturesByLeague.push({
+				// 		name: league.name,
+				// 		fixtures: await fetchFixturesByLeague(year, league.league),
+				// 	})
+				// }
 				allFixturesByLeague.push({
 					name: league.name,
-					fixtures: await fetchFixturesByLeague(year - 1, league.league),
+					fixtures: await fetchFixturesByLeague(year, league.league),
 				})
-				const existingData = allFixturesByLeague.find(
-					(data) => data.name === league.name,
-				)
-
-				if (existingData) {
-					existingData.fixtures.push(
-						...(await fetchFixturesByLeague(year, league.league)),
-					)
-				} else {
-					allFixturesByLeague.push({
-						name: league.name,
-						fixtures: await fetchFixturesByLeague(year, league.league),
-					})
-				}
 			}
 		}
 

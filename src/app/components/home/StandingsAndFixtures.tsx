@@ -1,5 +1,5 @@
 'use client'
-import { AllFixtures, Standing } from '@/types'
+import { AllFixtures, oneTeam, Standing, Matches, Match } from '@/types'
 import Link from 'next/link'
 import { useEffect, useRef, useState } from 'react'
 import FixturesByLeague from './FixturesByLeague'
@@ -13,11 +13,17 @@ export default function StandingsAndFixtures({
 	standingsData: Standing[][]
 	filteredFixtures: AllFixtures[]
 }) {
+	// console.log(standingsData)
+
 	const currentTime = moment()
 	const countSeasons = standingsData[0].length - 1
 	const [year, setYear] = useState(0)
 	const [activeTab, setActiveTab] = useState(0)
 	const [activeTabYears, setActiveTabYears] = useState(countSeasons)
+	const [tabMatch, setTabMatch] = useState<string>('summary')
+	const [activeTabMatch, setActiveTabMatch] = useState(0)
+	const [tabHalf, setTabHalf] = useState<string>('match')
+	const [activeTabHalf, setActiveTabHalf] = useState(0)
 	const menuRef = useRef<HTMLDivElement>(null)
 
 	const scrollToTab = (index: number) => {
@@ -42,6 +48,15 @@ export default function StandingsAndFixtures({
 		setActiveTabYears(index)
 	}
 
+	const handleTabClickMatch = (match: string, index: number) => {
+		setTabMatch(match)
+		setActiveTabMatch(index)
+	}
+	const handleTabClickHalf = (half: string, index: number) => {
+		setTabHalf(half)
+		setActiveTabHalf(index)
+	}
+
 	useEffect(() => {
 		const handleWheel = (event: WheelEvent) => {
 			if (event.shiftKey) {
@@ -63,7 +78,7 @@ export default function StandingsAndFixtures({
 
 	return (
 		<div className="flex flex-col w-full max-w-7xl bg-gradient-to-br from-sky-800/75 to-sky-800/25 lg:flex-row">
-			<div className="flex justify-center items-center lg:w-3/5 md:p-10 py-5">
+			<div className="flex flex-col justify-center items-center lg:w-3/5 md:p-10 py-5">
 				<div className="flex flex-col justify-center items-center bg-gradient-to-b from-black/40 w-full text-neutral-100 rounded-3xl">
 					<div className="flex flex-col w-full justify-center items-center">
 						<div className="p-2 font-bold">STANDING</div>
@@ -105,6 +120,38 @@ export default function StandingsAndFixtures({
 									</button>
 								))}
 						</div>
+						<div className="flex self-start gap-2">
+							{standingsData[0][0].league.standings[0].matches &&
+								Object.keys(
+									standingsData[0][0].league.standings[0].matches,
+								).map((match, i) => (
+									<div>
+										<button
+											key={match}
+											className={`mt-3 w-full flex justify-center items-center p-4 rounded-t-lg bg-red
+												${i === activeTabMatch ? 'opacity-100' : 'bg-black/100 opacity-50'}`}
+											onClick={() => handleTabClickMatch(match, i)}
+										>
+											{match}
+										</button>
+									</div>
+								))}
+						</div>
+						<div className="flex self-start gap-2">
+							{standingsData[0][0].league.standings[0].matches.summary &&
+								Object.keys(
+									standingsData[0][0].league.standings[0].matches.summary,
+								).map((half, i) => (
+									<button
+										key={half}
+										className={`mt-3 w-full flex justify-center items-center p-4 rounded-t-lg bg-red
+												${i === activeTabHalf ? 'opacity-100' : 'bg-black/100 opacity-50'}`}
+										onClick={() => handleTabClickHalf(half, i)}
+									>
+										{half}
+									</button>
+								))}
+						</div>
 						<div
 							ref={menuRef}
 							className="flex w-full overflow-x-hidden snap-x scrollbar-none scroll-smooth text-xs md:text-base lg:text-lg"
@@ -112,7 +159,7 @@ export default function StandingsAndFixtures({
 							{standingsData.map((responseData, i) => (
 								<div
 									key={i}
-									className="flex justify-center items-center flex-shrink-0 w-full snap-center"
+									className="flex flex-col justify-center items-center flex-shrink-0 w-full snap-center"
 								>
 									<div className="flex flex-col justify-between w-full p-2">
 										<div className="flex w-full p-1">
@@ -130,56 +177,84 @@ export default function StandingsAndFixtures({
 											</div>
 											<div className="w-2/12 text-center">Form</div>
 										</div>
-										{responseData[year].league &&
-											responseData[year].league.standings.length &&
-											responseData[year].league.standings.map((team, j) => (
-												<Link
-													href={`/team/${team.id}`}
-													key={team.id}
-													className={`flex w-full p-1 hover:bg-red-800/50
+										{responseData[year].league.standings.length &&
+											responseData[year].league.standings.map(
+												(team: oneTeam, j) => (
+													<Link
+														href={`/team/${team.id}`}
+														key={team.id}
+														className={`flex w-full p-1 hover:bg-red-800/50
 											${j % 2 === 0 ? 'bg-black/40' : ''}`}
-												>
-													<div className="flex justify-center items-center w-1/12 px-2">
-														{j + 1}
-													</div>
-													<div className="flex items-center w-3/12 text-xs md:text-base lg:text-lg">
-														{team.name}
-													</div>
-													<div className="flex justify-center items-center w-6/12">
-														<div className="w-full text-center">
-															{team.all.played}
+													>
+														<div className="flex justify-center items-center w-1/12 px-2">
+															{j + 1}
 														</div>
-														<div className="w-full text-center">
-															{team.all.win}
+														<div className="flex items-center w-3/12 text-xs md:text-base lg:text-lg">
+															{team.name}
 														</div>
-														<div className="w-full text-center">
-															{team.all.draw}
+														<div className="flex justify-center items-center w-6/12">
+															<div className="w-full text-center">
+																{
+																	team.matches[tabMatch as keyof Matches][
+																		tabHalf as keyof Match
+																	].played
+																}
+															</div>
+															<div className="w-full text-center">
+																{
+																	team.matches[tabMatch as keyof Matches][
+																		tabHalf as keyof Match
+																	].win
+																}
+															</div>
+															<div className="w-full text-center">
+																{
+																	team.matches[tabMatch as keyof Matches][
+																		tabHalf as keyof Match
+																	].draw
+																}
+															</div>
+															<div className="w-full text-center">
+																{
+																	team.matches[tabMatch as keyof Matches][
+																		tabHalf as keyof Match
+																	].lose
+																}
+															</div>
+															<div className="w-full text-center font-bold">
+																{team.points}
+															</div>
+															<div className="w-full text-center">
+																{
+																	team.matches[tabMatch as keyof Matches][
+																		tabHalf as keyof Match
+																	].goals_for
+																}
+															</div>
+															<div className="w-full text-center">
+																{
+																	team.matches[tabMatch as keyof Matches][
+																		tabHalf as keyof Match
+																	].goals_against
+																}
+															</div>
+															<div className="w-full text-center">
+																{
+																	team.matches[tabMatch as keyof Matches][
+																		tabHalf as keyof Match
+																	].goals_diff
+																}
+															</div>
 														</div>
-														<div className="w-full text-center">
-															{team.all.lose}
-														</div>
-														<div className="w-full text-center font-bold">
-															{team.points}
-														</div>
-														<div className="w-full text-center">
-															{team.all.goals_for}
-														</div>
-														<div className="w-full text-center">
-															{team.all.goals_against}
-														</div>
-														<div className="w-full text-center">
-															{team.all.goals_diff}
-														</div>
-													</div>
-													<div className="w-2/12 flex justify-center items-center">
-														{team.form.result
-															?.split('')
-															.slice(-5)
-															.map((char, i) => (
-																<div
-																	key={char + i}
-																	title={team.form.info.slice(-5)[i]}
-																	className={`opacity-80 w-5 h-5 m-[1px] flex justify-center items-center font-bold
+														<div className="w-2/12 flex justify-center items-center">
+															{team.form.result
+																?.split('')
+																.slice(-5)
+																.map((char, i) => (
+																	<div
+																		key={char + i}
+																		title={team.form.info.slice(-5)[i]}
+																		className={`opacity-80 w-5 h-5 m-[1px] flex justify-center items-center font-bold
                               ${
 																char === 'L'
 																	? 'bg-red-500'
@@ -187,15 +262,39 @@ export default function StandingsAndFixtures({
 																	? 'bg-gray-500'
 																	: 'bg-green-500'
 															}`}
-																>
-																	{char}
-																</div>
-															))}
-													</div>
-												</Link>
-											))}
+																	>
+																		{char}
+																	</div>
+																))}
+														</div>
+													</Link>
+												),
+											)}
 									</div>
 								</div>
+							))}
+						</div>
+					</div>
+					<div className="flex flex-col w-full justify-center items-center">
+						<div className="p-2 font-bold">STATICS STANDING</div>
+						<div className="flex justify-start w-full gap-2 overflow-x-auto">
+							{Object.keys(
+								standingsData[0][0].league.standings[0].statistics,
+							).map((name, i) => (
+								<button
+									key={i}
+									className={`flex justify-center items-center shrink-0 p-4 rounded-lg
+								${i === activeTab ? 'opacity-100' : 'bg-black/100 opacity-50'}`}
+									// onClick={() => handleTabClick(i)}
+								>
+									<Image
+										src={`/${name}.png`}
+										alt={name}
+										width={70}
+										height={60}
+									/>
+									{/* {name} */}
+								</button>
 							))}
 						</div>
 					</div>

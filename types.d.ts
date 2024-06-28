@@ -19,14 +19,32 @@ type League = {
 type oneTeam = {
 	id: number
 	name: string
-	home: Games
-	away: Games
-	all: Games
+	matches: Matches
 	points: number
 	form: {
 		result: string
 		info: Array<string>
 	}
+	statistics: {
+		both_score: Matches
+		corners: Matches
+		individ_total: Matches
+		productive_half: Matches
+		total: Matches
+		yellow_cards: Matches
+	}
+}
+
+type Matches = {
+	summary: Match
+	home: Match
+	away: Match
+}
+
+type Match = {
+	match: Games
+	first_half: Games
+	second_half: Games
 }
 
 type Games = {
@@ -113,4 +131,12 @@ type AllFixtures = {
 	fixtures: Fixture[]
 }
 
-export { StandingLeagues, Standing, oneTeam, AllFixtures, Fixture }
+export {
+	StandingLeagues,
+	Standing,
+	oneTeam,
+	AllFixtures,
+	Fixture,
+	Matches,
+	Match,
+}
