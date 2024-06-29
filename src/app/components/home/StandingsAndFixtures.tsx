@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from 'react'
 import FixturesByLeague from './FixturesByLeague'
 import Image from 'next/image'
 import moment from 'moment'
+import { TemplateStat } from './TemplateStat'
 
 export const StandingsAndFixtures = ({
 	standingsData,
@@ -13,6 +14,8 @@ export const StandingsAndFixtures = ({
 	standingsData: Standing[][]
 	filteredFixtures: AllFixtures[]
 }) => {
+	console.log()
+
 	const currentTime = moment()
 	const countSeasons = standingsData[0].length - 1
 	const [year, setYear] = useState(0)
@@ -22,7 +25,9 @@ export const StandingsAndFixtures = ({
 	const [activeTabMatch, setActiveTabMatch] = useState(0)
 	const [tabHalf, setTabHalf] = useState<string>('match')
 	const [activeTabHalf, setActiveTabHalf] = useState(0)
+	const [activeTabStat, setActiveTabStat] = useState(0)
 	const menuRef = useRef<HTMLDivElement>(null)
+	const menuRefStat = useRef<HTMLDivElement>(null)
 
 	const scrollToTab = (index: number) => {
 		const container = menuRef.current
@@ -36,9 +41,26 @@ export const StandingsAndFixtures = ({
 		}
 	}
 
+	const scrollToTabStat = (index: number) => {
+		const container = menuRefStat.current
+		if (container) {
+			const tab = container.children[index] as HTMLElement
+			tab?.scrollIntoView({
+				behavior: 'smooth',
+				block: 'nearest',
+				inline: 'center',
+			})
+		}
+	}
+
 	const handleTabClick = (index: number) => {
 		setActiveTab(index)
 		scrollToTab(index)
+	}
+
+	const handleTabClickStat = (index: number) => {
+		setActiveTabStat(index)
+		scrollToTabStat(index)
 	}
 
 	const handleTabClickYear = (index: number, year: number) => {
@@ -291,13 +313,13 @@ export const StandingsAndFixtures = ({
 						<div className="p-2 font-bold">STATICS STANDING</div>
 						<div className="flex justify-start w-full gap-2 overflow-x-auto">
 							{Object.keys(
-								standingsData[0][0].league.standings[0].statistics,
+								standingsData[activeTab][year].league.standings[0].statistics,
 							).map((name, i) => (
 								<button
 									key={i}
 									className={`flex justify-center items-center shrink-0 p-4 rounded-lg
-								${i === activeTab ? 'opacity-100' : 'bg-black/100 opacity-50'}`}
-									// onClick={() => handleTabClick(i)}
+								${i === activeTabStat ? 'opacity-100' : 'bg-black/100 opacity-50'}`}
+									onClick={() => handleTabClickStat(i)}
 								>
 									<Image
 										src={`/${name}.png`}
@@ -305,8 +327,74 @@ export const StandingsAndFixtures = ({
 										width={70}
 										height={60}
 									/>
-									{/* {name} */}
 								</button>
+							))}
+						</div>
+						<div className="flex justify-center w-full gap-2">
+							{standingsData[0]
+								.map((item, index, array) => array[array.length - 1 - index])
+								.map((season, j) => (
+									<button
+										key={j}
+										className={`mt-3 w-full flex justify-center items-center p-4 rounded-t-lg bg-red
+										${j === activeTabYears ? 'opacity-100' : 'bg-black/100 opacity-50'}`}
+										onClick={() =>
+											handleTabClickYear(
+												j,
+												currentTime.year() - 1 - season.league.season,
+											)
+										}
+									>
+										{season.league.season}
+									</button>
+								))}
+						</div>
+						<div className="flex self-start gap-2">
+							{standingsData[0][0].league.standings[0].matches &&
+								Object.keys(
+									standingsData[0][0].league.standings[0].matches,
+								).map((match, i) => (
+									<div key={match + i}>
+										<button
+											className={`mt-3 w-full flex justify-center items-center p-4 rounded-t-lg bg-red
+												${i === activeTabMatch ? 'opacity-100' : 'bg-black/100 opacity-50'}`}
+											onClick={() => handleTabClickMatch(match, i)}
+										>
+											{match}
+										</button>
+									</div>
+								))}
+						</div>
+						<div className="flex self-start gap-2">
+							{standingsData[0][0].league.standings[0].matches.summary &&
+								Object.keys(
+									standingsData[0][0].league.standings[0].matches.summary,
+								).map((half, i) => (
+									<button
+										key={half + i}
+										className={`mt-3 w-full flex justify-center items-center p-4 rounded-t-lg bg-red
+												${i === activeTabHalf ? 'opacity-100' : 'bg-black/100 opacity-50'}`}
+										onClick={() => handleTabClickHalf(half, i)}
+									>
+										{half}
+									</button>
+								))}
+						</div>
+						<div
+							ref={menuRefStat}
+							className="flex w-full overflow-x-hidden snap-x scrollbar-none scroll-smooth text-xs md:text-base lg:text-lg"
+						>
+							{Object.keys(
+								standingsData[activeTab][year].league.standings[0].statistics,
+							).map((stat: string, i) => (
+								<div
+									key={stat + i}
+									className="flex flex-col justify-center items-center flex-shrink-0 w-full snap-center"
+								>
+									<div className="flex flex-col justify-between w-full p-2">
+										<TemplateStat stat={stat} />
+									</div>
+								</div>
 							))}
 						</div>
 					</div>
