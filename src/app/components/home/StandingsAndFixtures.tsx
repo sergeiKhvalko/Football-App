@@ -6,15 +6,13 @@ import FixturesByLeague from './FixturesByLeague'
 import Image from 'next/image'
 import moment from 'moment'
 
-export default function StandingsAndFixtures({
+export const StandingsAndFixtures = ({
 	standingsData,
 	filteredFixtures,
 }: {
 	standingsData: Standing[][]
 	filteredFixtures: AllFixtures[]
-}) {
-	// console.log(standingsData)
-
+}) => {
 	const currentTime = moment()
 	const countSeasons = standingsData[0].length - 1
 	const [year, setYear] = useState(0)
@@ -49,10 +47,21 @@ export default function StandingsAndFixtures({
 	}
 
 	const handleTabClickMatch = (match: string, index: number) => {
+		standingsData[activeTab][year].league.standings.sort(
+			(a, b) =>
+				b.matches[match as keyof Matches][tabHalf as keyof Match].points -
+				a.matches[match as keyof Matches][tabHalf as keyof Match].points,
+		)
 		setTabMatch(match)
 		setActiveTabMatch(index)
 	}
+
 	const handleTabClickHalf = (half: string, index: number) => {
+		standingsData[activeTab][year].league.standings.sort(
+			(a, b) =>
+				b.matches[tabMatch as keyof Matches][half as keyof Match].points -
+				a.matches[tabMatch as keyof Matches][half as keyof Match].points,
+		)
 		setTabHalf(half)
 		setActiveTabHalf(index)
 	}
@@ -125,9 +134,8 @@ export default function StandingsAndFixtures({
 								Object.keys(
 									standingsData[0][0].league.standings[0].matches,
 								).map((match, i) => (
-									<div>
+									<div key={match + i}>
 										<button
-											key={match}
 											className={`mt-3 w-full flex justify-center items-center p-4 rounded-t-lg bg-red
 												${i === activeTabMatch ? 'opacity-100' : 'bg-black/100 opacity-50'}`}
 											onClick={() => handleTabClickMatch(match, i)}
@@ -143,7 +151,7 @@ export default function StandingsAndFixtures({
 									standingsData[0][0].league.standings[0].matches.summary,
 								).map((half, i) => (
 									<button
-										key={half}
+										key={half + i}
 										className={`mt-3 w-full flex justify-center items-center p-4 rounded-t-lg bg-red
 												${i === activeTabHalf ? 'opacity-100' : 'bg-black/100 opacity-50'}`}
 										onClick={() => handleTabClickHalf(half, i)}
@@ -222,7 +230,11 @@ export default function StandingsAndFixtures({
 																}
 															</div>
 															<div className="w-full text-center font-bold">
-																{team.points}
+																{
+																	team.matches[tabMatch as keyof Matches][
+																		tabHalf as keyof Match
+																	].points
+																}
 															</div>
 															<div className="w-full text-center">
 																{

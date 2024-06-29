@@ -55,6 +55,7 @@ type Games = {
 	goals_for: number
 	goals_against: number
 	goals_diff: number
+	points: number
 }
 
 // Fixtures

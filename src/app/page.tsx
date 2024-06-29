@@ -1,5 +1,5 @@
 import { AllFixtures, Standing } from '@/types'
-import StandingsAndFixtures from '@/src/app/components/home/StandingsAndFixtures'
+import { StandingsAndFixtures } from '@/src/app/components/home/StandingsAndFixtures'
 import getFixturesForLeagues from './util/getFixturesForLeagues'
 import getStandings from './util/getStandings'
 
