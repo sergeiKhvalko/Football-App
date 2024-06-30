@@ -25,14 +25,15 @@ type oneTeam = {
 		result: string
 		info: Array<string>
 	}
-	statistics: {
-		both_score: Matches
-		corners: Matches
-		individ_total: Matches
-		productive_half: Matches
-		total: Matches
-		yellow_cards: Matches
-	}
+	statistics: Statistics
+}
+type Statistics = {
+	both_score: StatMatches
+	corners: StatMatches
+	individ_total: StatMatches
+	productive_half: StatMatches
+	total: StatMatches
+	yellow_cards: StatMatches
 }
 
 type Matches = {
@@ -41,10 +42,67 @@ type Matches = {
 	away: Match
 }
 
+type StatMatches = {
+	summary: StatMatch
+	home: StatMatch
+	away: StatMatch
+}
+
 type Match = {
 	match: Games
 	first_half: Games
 	second_half: Games
+}
+
+type StatMatch = {
+	match: Stat
+	first_half: Stat
+	second_half: Stat
+}
+
+type Stat = {
+	matches: number
+	corner_count: number
+	corner_win: number
+	corner_draw: number
+	corner_lose: number
+	corner_under_8_5: number
+	corner_under_9_5: number
+	corner_over_9_5: number
+	corner_over_10_5: number
+	corner_over_11_5: number
+	yellow_count: number
+	yellow_win: number
+	yellow_draw: number
+	yellow_lose: number
+	yellow_under_2_5: number
+	yellow_under_3_5: number
+	yellow_over_3_5: number
+	yellow_over_4_5: number
+	yellow_over_5_5: number
+	total_count: number
+	total_win: number
+	total_under_0_5: number
+	total_under_1_5: number
+	total_under_2_5: number
+	total_over_2_5: number
+	total_over_3_5: number
+	total_over_4_5: number
+	in_total_count: number
+	in_total_under_0_5: number
+	in_total_under_1_5: number
+	in_total_over_1_5: number
+	in_total_over_2_5: number
+	bs_count: number
+	bs_yes: number
+	bs_no: number
+	bs_win: number
+	bs_draw: number
+	bs_lose: number
+	prod_count: number
+	prod_first_over_second: number
+	prod_first_equal_second: number
+	prod_second_over_first: number
 }
 
 type Games = {
@@ -140,4 +198,7 @@ export {
 	Fixture,
 	Matches,
 	Match,
+	Statistics,
+	StatMatches,
+	StatMatch,
 }

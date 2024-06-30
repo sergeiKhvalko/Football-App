@@ -1,5 +1,14 @@
 'use client'
-import { AllFixtures, oneTeam, Standing, Matches, Match } from '@/types'
+import {
+	AllFixtures,
+	oneTeam,
+	Standing,
+	Matches,
+	Match,
+	Statistics,
+	StatMatches,
+	StatMatch,
+} from '@/types'
 import Link from 'next/link'
 import { useEffect, useRef, useState } from 'react'
 import FixturesByLeague from './FixturesByLeague'
@@ -14,7 +23,7 @@ export const StandingsAndFixtures = ({
 	standingsData: Standing[][]
 	filteredFixtures: AllFixtures[]
 }) => {
-	console.log()
+	console.log(standingsData)
 
 	const currentTime = moment()
 	const countSeasons = standingsData[0].length - 1
@@ -26,6 +35,7 @@ export const StandingsAndFixtures = ({
 	const [tabHalf, setTabHalf] = useState<string>('match')
 	const [activeTabHalf, setActiveTabHalf] = useState(0)
 	const [activeTabStat, setActiveTabStat] = useState(0)
+	const [tabStat, setTabStat] = useState('corners')
 	const menuRef = useRef<HTMLDivElement>(null)
 	const menuRefStat = useRef<HTMLDivElement>(null)
 
@@ -58,7 +68,8 @@ export const StandingsAndFixtures = ({
 		scrollToTab(index)
 	}
 
-	const handleTabClickStat = (index: number) => {
+	const handleTabClickStat = (index: number, name: string) => {
+		setTabStat(name)
 		setActiveTabStat(index)
 		scrollToTabStat(index)
 	}
@@ -312,23 +323,24 @@ export const StandingsAndFixtures = ({
 					<div className="flex flex-col w-full justify-center items-center">
 						<div className="p-2 font-bold">STATICS STANDING</div>
 						<div className="flex justify-start w-full gap-2 overflow-x-auto">
-							{Object.keys(
-								standingsData[activeTab][year].league.standings[0].statistics,
-							).map((name, i) => (
-								<button
-									key={i}
-									className={`flex justify-center items-center shrink-0 p-4 rounded-lg
+							{standingsData[activeTab][year].league.standings.length &&
+								Object.keys(
+									standingsData[activeTab][year].league.standings[0].statistics,
+								).map((name, i) => (
+									<button
+										key={i}
+										className={`flex justify-center items-center shrink-0 p-4 rounded-lg
 								${i === activeTabStat ? 'opacity-100' : 'bg-black/100 opacity-50'}`}
-									onClick={() => handleTabClickStat(i)}
-								>
-									<Image
-										src={`/${name}.png`}
-										alt={name}
-										width={70}
-										height={60}
-									/>
-								</button>
-							))}
+										onClick={() => handleTabClickStat(i, name)}
+									>
+										<Image
+											src={`/${name}.png`}
+											alt={name}
+											width={70}
+											height={60}
+										/>
+									</button>
+								))}
 						</div>
 						<div className="flex justify-center w-full gap-2">
 							{standingsData[0]
@@ -384,18 +396,396 @@ export const StandingsAndFixtures = ({
 							ref={menuRefStat}
 							className="flex w-full overflow-x-hidden snap-x scrollbar-none scroll-smooth text-xs md:text-base lg:text-lg"
 						>
-							{Object.keys(
-								standingsData[activeTab][year].league.standings[0].statistics,
-							).map((stat: string, i) => (
-								<div
-									key={stat + i}
-									className="flex flex-col justify-center items-center flex-shrink-0 w-full snap-center"
-								>
-									<div className="flex flex-col justify-between w-full p-2">
-										<TemplateStat stat={stat} />
+							{standingsData[activeTab][year].league.standings.length &&
+								Object.keys(
+									standingsData[activeTab][year].league.standings[0].statistics,
+								).map((stat: string, i) => (
+									<div
+										key={stat + i}
+										className="flex flex-col justify-center items-center flex-shrink-0 w-full snap-center"
+									>
+										<div className="flex flex-col justify-between w-full p-2">
+											<TemplateStat stat={stat} />
+											{standingsData[activeTab][year].league.standings.length &&
+												standingsData[activeTab][year].league.standings.map(
+													(team: oneTeam, j) => (
+														<Link
+															href={`/team/${team.id}`}
+															key={team.id}
+															className={`flex w-full p-1 hover:bg-red-800/50
+											${j % 2 === 0 ? 'bg-black/40' : ''}`}
+														>
+															<div className="flex justify-center items-center w-1/12 px-2">
+																{j + 1}
+															</div>
+															<div className="flex items-center w-3/12 text-xs md:text-base lg:text-lg">
+																{team.name}
+															</div>
+															<div className="flex justify-center items-center w-8/12">
+																<div className="w-full text-center">
+																	{
+																		team.statistics[
+																			tabStat as keyof Statistics
+																		][tabMatch as keyof StatMatches][
+																			tabHalf as keyof StatMatch
+																		].matches
+																	}
+																</div>
+																{stat === 'corners' && (
+																	<>
+																		<div className="w-full text-center">
+																			{
+																				team.statistics[
+																					tabStat as keyof Statistics
+																				][tabMatch as keyof StatMatches][
+																					tabHalf as keyof StatMatch
+																				].corner_win
+																			}
+																		</div>
+																		<div className="w-full text-center">
+																			{
+																				team.statistics[
+																					tabStat as keyof Statistics
+																				][tabMatch as keyof StatMatches][
+																					tabHalf as keyof StatMatch
+																				].corner_draw
+																			}
+																		</div>
+																		<div className="w-full text-center">
+																			{
+																				team.statistics[
+																					tabStat as keyof Statistics
+																				][tabMatch as keyof StatMatches][
+																					tabHalf as keyof StatMatch
+																				].corner_lose
+																			}
+																		</div>
+																		<div className="w-full text-center">
+																			{
+																				team.statistics[
+																					tabStat as keyof Statistics
+																				][tabMatch as keyof StatMatches][
+																					tabHalf as keyof StatMatch
+																				].corner_under_8_5
+																			}
+																		</div>
+																		<div className="w-full text-center">
+																			{
+																				team.statistics[
+																					tabStat as keyof Statistics
+																				][tabMatch as keyof StatMatches][
+																					tabHalf as keyof StatMatch
+																				].corner_under_9_5
+																			}
+																		</div>
+																		<div className="w-full text-center">
+																			{
+																				team.statistics[
+																					tabStat as keyof Statistics
+																				][tabMatch as keyof StatMatches][
+																					tabHalf as keyof StatMatch
+																				].corner_over_9_5
+																			}
+																		</div>
+																		<div className="w-full text-center">
+																			{
+																				team.statistics[
+																					tabStat as keyof Statistics
+																				][tabMatch as keyof StatMatches][
+																					tabHalf as keyof StatMatch
+																				].corner_over_10_5
+																			}
+																		</div>
+																		<div className="w-full text-center">
+																			{
+																				team.statistics[
+																					tabStat as keyof Statistics
+																				][tabMatch as keyof StatMatches][
+																					tabHalf as keyof StatMatch
+																				].corner_over_11_5
+																			}
+																		</div>
+																	</>
+																)}
+																{stat === 'yellow_cards' && (
+																	<>
+																		<div className="w-full text-center">
+																			{
+																				team.statistics[
+																					tabStat as keyof Statistics
+																				][tabMatch as keyof StatMatches][
+																					tabHalf as keyof StatMatch
+																				].yellow_win
+																			}
+																		</div>
+																		<div className="w-full text-center">
+																			{
+																				team.statistics[
+																					tabStat as keyof Statistics
+																				][tabMatch as keyof StatMatches][
+																					tabHalf as keyof StatMatch
+																				].yellow_draw
+																			}
+																		</div>
+																		<div className="w-full text-center">
+																			{
+																				team.statistics[
+																					tabStat as keyof Statistics
+																				][tabMatch as keyof StatMatches][
+																					tabHalf as keyof StatMatch
+																				].yellow_lose
+																			}
+																		</div>
+																		<div className="w-full text-center">
+																			{
+																				team.statistics[
+																					tabStat as keyof Statistics
+																				][tabMatch as keyof StatMatches][
+																					tabHalf as keyof StatMatch
+																				].yellow_under_2_5
+																			}
+																		</div>
+																		<div className="w-full text-center">
+																			{
+																				team.statistics[
+																					tabStat as keyof Statistics
+																				][tabMatch as keyof StatMatches][
+																					tabHalf as keyof StatMatch
+																				].yellow_under_3_5
+																			}
+																		</div>
+																		<div className="w-full text-center">
+																			{
+																				team.statistics[
+																					tabStat as keyof Statistics
+																				][tabMatch as keyof StatMatches][
+																					tabHalf as keyof StatMatch
+																				].yellow_over_3_5
+																			}
+																		</div>
+																		<div className="w-full text-center">
+																			{
+																				team.statistics[
+																					tabStat as keyof Statistics
+																				][tabMatch as keyof StatMatches][
+																					tabHalf as keyof StatMatch
+																				].yellow_over_4_5
+																			}
+																		</div>
+																		<div className="w-full text-center">
+																			{
+																				team.statistics[
+																					tabStat as keyof Statistics
+																				][tabMatch as keyof StatMatches][
+																					tabHalf as keyof StatMatch
+																				].yellow_over_5_5
+																			}
+																		</div>
+																	</>
+																)}
+																{stat === 'total' && (
+																	<>
+																		<div className="w-full text-center">
+																			{
+																				team.statistics[
+																					tabStat as keyof Statistics
+																				][tabMatch as keyof StatMatches][
+																					tabHalf as keyof StatMatch
+																				].total_win
+																			}
+																		</div>
+																		<div className="w-full text-center">
+																			{
+																				team.statistics[
+																					tabStat as keyof Statistics
+																				][tabMatch as keyof StatMatches][
+																					tabHalf as keyof StatMatch
+																				].total_draw
+																			}
+																		</div>
+																		<div className="w-full text-center">
+																			{
+																				team.statistics[
+																					tabStat as keyof Statistics
+																				][tabMatch as keyof StatMatches][
+																					tabHalf as keyof StatMatch
+																				].total_lose
+																			}
+																		</div>
+																		<div className="w-full text-center">
+																			{
+																				team.statistics[
+																					tabStat as keyof Statistics
+																				][tabMatch as keyof StatMatches][
+																					tabHalf as keyof StatMatch
+																				].total_under_1_5
+																			}
+																		</div>
+																		<div className="w-full text-center">
+																			{
+																				team.statistics[
+																					tabStat as keyof Statistics
+																				][tabMatch as keyof StatMatches][
+																					tabHalf as keyof StatMatch
+																				].total_under_2_5
+																			}
+																		</div>
+																		<div className="w-full text-center">
+																			{
+																				team.statistics[
+																					tabStat as keyof Statistics
+																				][tabMatch as keyof StatMatches][
+																					tabHalf as keyof StatMatch
+																				].total_over_2_5
+																			}
+																		</div>
+																		<div className="w-full text-center">
+																			{
+																				team.statistics[
+																					tabStat as keyof Statistics
+																				][tabMatch as keyof StatMatches][
+																					tabHalf as keyof StatMatch
+																				].total_over_3_5
+																			}
+																		</div>
+																		<div className="w-full text-center">
+																			{
+																				team.statistics[
+																					tabStat as keyof Statistics
+																				][tabMatch as keyof StatMatches][
+																					tabHalf as keyof StatMatch
+																				].total_over_4_5
+																			}
+																		</div>
+																	</>
+																)}
+																{stat === 'individ_total' && (
+																	<>
+																		<div className="w-full text-center">
+																			{
+																				team.statistics[
+																					tabStat as keyof Statistics
+																				][tabMatch as keyof StatMatches][
+																					tabHalf as keyof StatMatch
+																				].in_total_under_0_5
+																			}
+																		</div>
+																		<div className="w-full text-center">
+																			{
+																				team.statistics[
+																					tabStat as keyof Statistics
+																				][tabMatch as keyof StatMatches][
+																					tabHalf as keyof StatMatch
+																				].in_total_under_0_5
+																			}
+																		</div>
+																		<div className="w-full text-center">
+																			{
+																				team.statistics[
+																					tabStat as keyof Statistics
+																				][tabMatch as keyof StatMatches][
+																					tabHalf as keyof StatMatch
+																				].in_total_over_1_5
+																			}
+																		</div>
+																		<div className="w-full text-center">
+																			{
+																				team.statistics[
+																					tabStat as keyof Statistics
+																				][tabMatch as keyof StatMatches][
+																					tabHalf as keyof StatMatch
+																				].in_total_over_2_5
+																			}
+																		</div>
+																	</>
+																)}
+																{stat === 'both_score' && (
+																	<>
+																		<div className="w-full text-center">
+																			{
+																				team.statistics[
+																					tabStat as keyof Statistics
+																				][tabMatch as keyof StatMatches][
+																					tabHalf as keyof StatMatch
+																				].bs_yes
+																			}
+																		</div>
+																		<div className="w-full text-center">
+																			{
+																				team.statistics[
+																					tabStat as keyof Statistics
+																				][tabMatch as keyof StatMatches][
+																					tabHalf as keyof StatMatch
+																				].bs_no
+																			}
+																		</div>
+																		<div className="w-full text-center">
+																			{
+																				team.statistics[
+																					tabStat as keyof Statistics
+																				][tabMatch as keyof StatMatches][
+																					tabHalf as keyof StatMatch
+																				].bs_win
+																			}
+																		</div>
+																		<div className="w-full text-center">
+																			{
+																				team.statistics[
+																					tabStat as keyof Statistics
+																				][tabMatch as keyof StatMatches][
+																					tabHalf as keyof StatMatch
+																				].bs_draw
+																			}
+																		</div>
+																		<div className="w-full text-center">
+																			{
+																				team.statistics[
+																					tabStat as keyof Statistics
+																				][tabMatch as keyof StatMatches][
+																					tabHalf as keyof StatMatch
+																				].bs_lose
+																			}
+																		</div>
+																	</>
+																)}
+																{stat === 'productive_half' && (
+																	<>
+																		<div className="w-full text-center">
+																			{
+																				team.statistics[
+																					tabStat as keyof Statistics
+																				][tabMatch as keyof StatMatches][
+																					tabHalf as keyof StatMatch
+																				].prod_first_over_second
+																			}
+																		</div>
+																		<div className="w-full text-center">
+																			{
+																				team.statistics[
+																					tabStat as keyof Statistics
+																				][tabMatch as keyof StatMatches][
+																					tabHalf as keyof StatMatch
+																				].prod_first_equal_second
+																			}
+																		</div>
+																		<div className="w-full text-center">
+																			{
+																				team.statistics[
+																					tabStat as keyof Statistics
+																				][tabMatch as keyof StatMatches][
+																					tabHalf as keyof StatMatch
+																				].prod_second_over_first
+																			}
+																		</div>
+																	</>
+																)}
+															</div>
+														</Link>
+													),
+												)}
+										</div>
 									</div>
-								</div>
-							))}
+								))}
 						</div>
 					</div>
 				</div>

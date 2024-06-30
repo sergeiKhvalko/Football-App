@@ -38,7 +38,7 @@ export default async function getStandings(): Promise<Standing[][]> {
 		// { name: 'Serie B', id: 136 },
 		{ name: 'La Liga', id: 140 },
 		// { name: 'Segunda', id: 141 },
-		// { name: 'Ligue1', id: 61 },
+		{ name: 'Ligue1', id: 61 },
 		// { name: 'Ligue2', id: 62 },
 		// { name: 'Primeira', id: 94 },
 		// { name: 'Eredivisie', id: 88 },
