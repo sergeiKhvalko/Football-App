@@ -82,6 +82,8 @@ type Stat = {
 	yellow_over_5_5: number
 	total_count: number
 	total_win: number
+	total_draw: number
+	total_lose: number
 	total_under_0_5: number
 	total_under_1_5: number
 	total_under_2_5: number
