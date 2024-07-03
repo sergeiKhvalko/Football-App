@@ -66,6 +66,11 @@ type Stat = {
 	corner_win: number
 	corner_draw: number
 	corner_lose: number
+	corner_under_3_5: number
+	corner_under_4_5: number
+	corner_over_4_5: number
+	corner_over_5_5: number
+	corner_over_6_5: number
 	corner_under_8_5: number
 	corner_under_9_5: number
 	corner_over_9_5: number
@@ -75,8 +80,12 @@ type Stat = {
 	yellow_win: number
 	yellow_draw: number
 	yellow_lose: number
+	yellow_under_0_5: number
+	yellow_under_1_5: number
 	yellow_under_2_5: number
 	yellow_under_3_5: number
+	yellow_over_1_5: number
+	yellow_over_2_5: number
 	yellow_over_3_5: number
 	yellow_over_4_5: number
 	yellow_over_5_5: number

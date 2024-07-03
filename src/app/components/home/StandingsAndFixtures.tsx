@@ -10,7 +10,7 @@ import {
 	StatMatch,
 } from '@/types'
 import Link from 'next/link'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, useLayoutEffect } from 'react'
 import FixturesByLeague from './FixturesByLeague'
 import Image from 'next/image'
 import moment from 'moment'
@@ -19,9 +19,11 @@ import { TemplateStat } from './TemplateStat'
 export const StandingsAndFixtures = ({
 	standingsData,
 	filteredFixtures,
+	standingsDataStat,
 }: {
 	standingsData: Standing[][]
 	filteredFixtures: AllFixtures[]
+	standingsDataStat: Standing[][]
 }) => {
 	console.log(standingsData)
 
@@ -43,9 +45,61 @@ export const StandingsAndFixtures = ({
 	const menuRef = useRef<HTMLDivElement>(null)
 	const menuRefStat = useRef<HTMLDivElement>(null)
 
-	console.log('46', tabStat)
-	console.log('47', tabMatchStat)
-	console.log('48', tabHalfStat)
+	const sortCorners = (
+		statName: string,
+		match: string,
+		half: string,
+		activeTab: number,
+	) => {
+		if (half === 'match') {
+			standingsDataStat[activeTab][year].league.standings.sort(
+				(a: oneTeam, b: oneTeam) =>
+					b.statistics[statName as keyof Statistics][match as keyof Matches][
+						half as keyof Match
+					].corner_over_9_5 -
+					a.statistics[statName as keyof Statistics][match as keyof Matches][
+						half as keyof Match
+					].corner_over_9_5,
+			)
+		} else {
+			standingsDataStat[activeTab][year].league.standings.sort(
+				(a: oneTeam, b: oneTeam) =>
+					b.statistics[statName as keyof Statistics][match as keyof Matches][
+						half as keyof Match
+					].corner_over_4_5 -
+					a.statistics[statName as keyof Statistics][match as keyof Matches][
+						half as keyof Match
+					].corner_over_4_5,
+			)
+		}
+	}
+	// useLayoutEffect(() => {
+	// 	sortCorners(tabStat, tabMatchStat, tabHalfStat)
+	// }, [])
+
+	const sortYellowCards = (statName: string, match: string, half: string) => {
+		if (half === 'match') {
+			standingsDataStat[activeTab][year].league.standings.sort(
+				(a: oneTeam, b: oneTeam) =>
+					b.statistics[statName as keyof Statistics][match as keyof Matches][
+						half as keyof Match
+					].yellow_over_4_5 -
+					a.statistics[statName as keyof Statistics][match as keyof Matches][
+						half as keyof Match
+					].yellow_over_4_5,
+			)
+		} else {
+			standingsDataStat[activeTab][year].league.standings.sort(
+				(a: oneTeam, b: oneTeam) =>
+					b.statistics[statName as keyof Statistics][match as keyof Matches][
+						half as keyof Match
+					].yellow_over_2_5 -
+					a.statistics[statName as keyof Statistics][match as keyof Matches][
+						half as keyof Match
+					].yellow_over_2_5,
+			)
+		}
+	}
 
 	const scrollToTab = (index: number) => {
 		const container = menuRef.current
@@ -73,12 +127,21 @@ export const StandingsAndFixtures = ({
 	}
 
 	const handleTabClick = (index: number) => {
+		sortCorners(tabStat, tabMatchStat, tabHalfStat, index)
 		setActiveTab(index)
 		scrollToTab(index)
 	}
+	useEffect(() => {
+		scrollToTab(activeTab)
+	}, [activeTab])
 
 	const handleTabClickStat = (index: number, name: string) => {
-		if (name === 'productive_half') {
+		if (name === 'corners') {
+			sortCorners(name, tabMatchStat, tabHalfStat, activeTab)
+		} else if (name === 'yellow_cards') {
+			sortYellowCards(name, tabMatchStat, tabHalfStat)
+		} else if (name === 'productive_half') {
+			setTabHalf('match')
 		}
 		setTabStat(name)
 		setActiveTabStat(index)
@@ -100,14 +163,29 @@ export const StandingsAndFixtures = ({
 		setActiveTabMatch(index)
 	}
 
-	const handleTabClickMatchStat = (match: string, index: number) => {
-		// standingsData[activeTab][year].league.standings.sort(
-		// 	(a, b) =>
-		// 		b.matches[match as keyof Matches][tabHalf as keyof Match].points -
-		// 		a.matches[match as keyof Matches][tabHalf as keyof Match].points,
-		// )
+	const handleTabClickMatchStat = (
+		match: string,
+		tabStat: string,
+		index: number,
+	) => {
+		if (tabStat === 'corners') {
+			sortCorners(tabStat, match, tabHalfStat, activeTab)
+		} else if (tabStat === 'yellow_cards') {
+			sortYellowCards(tabStat, match, tabHalfStat)
+		}
+
 		setTabMatchStat(match)
 		setActiveTabMatchStat(index)
+	}
+
+	const handleMouseLeave = (name: string) => {
+		console.log('118---', name)
+
+		if (name === 'productive_half') {
+			setTabHalfStat('match')
+			setActiveTabHalfStat(0)
+		}
+		console.log('123---', tabHalfStat)
 	}
 
 	const handleTabClickHalf = (half: string, index: number) => {
@@ -120,12 +198,17 @@ export const StandingsAndFixtures = ({
 		setActiveTabHalf(index)
 	}
 
-	const handleTabClickMatchHalf = (half: string, index: number) => {
-		// standingsData[activeTab][year].league.standings.sort(
-		// 	(a, b) =>
-		// 		b.matches[tabMatch as keyof Matches][half as keyof Match].points -
-		// 		a.matches[tabMatch as keyof Matches][half as keyof Match].points,
-		// )
+	const handleTabClickHalfStat = (
+		tabStat: string,
+		tabMatchStat: string,
+		half: string,
+		index: number,
+	) => {
+		if (tabStat === 'corners') {
+			sortCorners(tabStat, tabMatchStat, half, activeTab)
+		} else if (tabStat === 'yellow_cards') {
+			sortYellowCards(tabStat, tabMatchStat, half)
+		}
 		setTabHalfStat(half)
 		setActiveTabHalfStat(index)
 	}
@@ -370,6 +453,7 @@ export const StandingsAndFixtures = ({
 										className={`flex justify-center items-center shrink-0 p-4 rounded-lg
 								${i === activeTabStat ? 'opacity-100' : 'bg-black/100 opacity-50'}`}
 										onClick={() => handleTabClickStat(i, name)}
+										onMouseOver={() => handleMouseLeave(name)}
 									>
 										<Image
 											src={`/${name}.png`}
@@ -408,7 +492,9 @@ export const StandingsAndFixtures = ({
 										<button
 											className={`mt-3 w-full flex justify-center items-center p-4 rounded-t-lg bg-red
 												${i === activeTabMatchStat ? 'opacity-100' : 'bg-black/100 opacity-50'}`}
-											onClick={() => handleTabClickMatchStat(matchStat, i)}
+											onClick={() =>
+												handleTabClickMatchStat(matchStat, tabStat, i)
+											}
 										>
 											{matchStat}
 										</button>
@@ -427,7 +513,9 @@ export const StandingsAndFixtures = ({
 										className={`mt-3 w-full flex justify-center items-center p-4 rounded-t-lg bg-red
 												${i === activeTabHalfStat ? 'opacity-100' : 'bg-black/100 opacity-50'}
 												${tabStat === 'productive_half' ? 'hidden' : ''}`}
-										onClick={() => handleTabClickMatchHalf(halfStat, i)}
+										onClick={() =>
+											handleTabClickHalfStat(tabStat, tabMatchStat, halfStat, i)
+										}
 										disabled={tabStat === 'productive_half'}
 									>
 										{halfStat}
@@ -438,19 +526,21 @@ export const StandingsAndFixtures = ({
 							ref={menuRefStat}
 							className="flex w-full overflow-x-hidden snap-x scrollbar-none scroll-smooth text-xs md:text-base lg:text-lg"
 						>
-							{standingsData[activeTab][year].league.standings.length &&
+							{standingsDataStat[activeTab][year].league.standings.length &&
 								Object.keys(
-									standingsData[activeTab][year].league.standings[0].statistics,
+									standingsDataStat[activeTab][year].league.standings[0]
+										.statistics,
 								).map((stat: string, i) => (
 									<div
 										key={stat + i}
 										className="flex flex-col justify-center items-center flex-shrink-0 w-full snap-center"
 									>
 										<div className="flex flex-col justify-between w-full p-2">
-											<TemplateStat stat={stat} />
-											{standingsData[activeTab][year].league.standings.length &&
-												standingsData[activeTab][year].league.standings.map(
-													(team: oneTeam, j) => (
+											<TemplateStat stat={stat} half={tabHalfStat} />
+											{standingsDataStat[activeTab][year].league.standings
+												.length &&
+												standingsDataStat[activeTab][year].league.standings.map(
+													(team: oneTeam, j: number) => (
 														<Link
 															href={`/team/${team.id}`}
 															key={team.id}
@@ -507,49 +597,69 @@ export const StandingsAndFixtures = ({
 																			}
 																		</div>
 																		<div className="w-full text-center">
-																			{
-																				team.statistics[
-																					tabStat as keyof Statistics
-																				][tabMatchStat as keyof StatMatches][
-																					tabHalfStat as keyof StatMatch
-																				].corner_under_8_5
-																			}
+																			{tabHalfStat === 'match'
+																				? team.statistics[
+																						tabStat as keyof Statistics
+																				  ][tabMatchStat as keyof StatMatches][
+																						tabHalfStat as keyof StatMatch
+																				  ].corner_under_8_5
+																				: team.statistics[
+																						tabStat as keyof Statistics
+																				  ][tabMatchStat as keyof StatMatches][
+																						tabHalfStat as keyof StatMatch
+																				  ].corner_under_3_5}
 																		</div>
 																		<div className="w-full text-center">
-																			{
-																				team.statistics[
-																					tabStat as keyof Statistics
-																				][tabMatchStat as keyof StatMatches][
-																					tabHalfStat as keyof StatMatch
-																				].corner_under_9_5
-																			}
+																			{tabHalfStat === 'match'
+																				? team.statistics[
+																						tabStat as keyof Statistics
+																				  ][tabMatchStat as keyof StatMatches][
+																						tabHalfStat as keyof StatMatch
+																				  ].corner_under_9_5
+																				: team.statistics[
+																						tabStat as keyof Statistics
+																				  ][tabMatchStat as keyof StatMatches][
+																						tabHalfStat as keyof StatMatch
+																				  ].corner_under_4_5}
 																		</div>
 																		<div className="w-full text-center">
-																			{
-																				team.statistics[
-																					tabStat as keyof Statistics
-																				][tabMatchStat as keyof StatMatches][
-																					tabHalfStat as keyof StatMatch
-																				].corner_over_9_5
-																			}
+																			{tabHalfStat === 'match'
+																				? team.statistics[
+																						tabStat as keyof Statistics
+																				  ][tabMatchStat as keyof StatMatches][
+																						tabHalfStat as keyof StatMatch
+																				  ].corner_over_9_5
+																				: team.statistics[
+																						tabStat as keyof Statistics
+																				  ][tabMatchStat as keyof StatMatches][
+																						tabHalfStat as keyof StatMatch
+																				  ].corner_over_4_5}
 																		</div>
 																		<div className="w-full text-center">
-																			{
-																				team.statistics[
-																					tabStat as keyof Statistics
-																				][tabMatchStat as keyof StatMatches][
-																					tabHalfStat as keyof StatMatch
-																				].corner_over_10_5
-																			}
+																			{tabHalfStat === 'match'
+																				? team.statistics[
+																						tabStat as keyof Statistics
+																				  ][tabMatchStat as keyof StatMatches][
+																						tabHalfStat as keyof StatMatch
+																				  ].corner_over_10_5
+																				: team.statistics[
+																						tabStat as keyof Statistics
+																				  ][tabMatchStat as keyof StatMatches][
+																						tabHalfStat as keyof StatMatch
+																				  ].corner_over_5_5}
 																		</div>
 																		<div className="w-full text-center">
-																			{
-																				team.statistics[
-																					tabStat as keyof Statistics
-																				][tabMatchStat as keyof StatMatches][
-																					tabHalfStat as keyof StatMatch
-																				].corner_over_11_5
-																			}
+																			{tabHalfStat === 'match'
+																				? team.statistics[
+																						tabStat as keyof Statistics
+																				  ][tabMatchStat as keyof StatMatches][
+																						tabHalfStat as keyof StatMatch
+																				  ].corner_over_11_5
+																				: team.statistics[
+																						tabStat as keyof Statistics
+																				  ][tabMatchStat as keyof StatMatches][
+																						tabHalfStat as keyof StatMatch
+																				  ].corner_over_6_5}
 																		</div>
 																	</>
 																)}
@@ -583,49 +693,69 @@ export const StandingsAndFixtures = ({
 																			}
 																		</div>
 																		<div className="w-full text-center">
-																			{
-																				team.statistics[
-																					tabStat as keyof Statistics
-																				][tabMatchStat as keyof StatMatches][
-																					tabHalfStat as keyof StatMatch
-																				].yellow_under_2_5
-																			}
+																			{tabHalfStat === 'match'
+																				? team.statistics[
+																						tabStat as keyof Statistics
+																				  ][tabMatchStat as keyof StatMatches][
+																						tabHalfStat as keyof StatMatch
+																				  ].yellow_under_2_5
+																				: team.statistics[
+																						tabStat as keyof Statistics
+																				  ][tabMatchStat as keyof StatMatches][
+																						tabHalfStat as keyof StatMatch
+																				  ].yellow_under_0_5}
 																		</div>
 																		<div className="w-full text-center">
-																			{
-																				team.statistics[
-																					tabStat as keyof Statistics
-																				][tabMatchStat as keyof StatMatches][
-																					tabHalfStat as keyof StatMatch
-																				].yellow_under_3_5
-																			}
+																			{tabHalfStat === 'match'
+																				? team.statistics[
+																						tabStat as keyof Statistics
+																				  ][tabMatchStat as keyof StatMatches][
+																						tabHalfStat as keyof StatMatch
+																				  ].yellow_under_3_5
+																				: team.statistics[
+																						tabStat as keyof Statistics
+																				  ][tabMatchStat as keyof StatMatches][
+																						tabHalfStat as keyof StatMatch
+																				  ].yellow_under_1_5}
 																		</div>
 																		<div className="w-full text-center">
-																			{
-																				team.statistics[
-																					tabStat as keyof Statistics
-																				][tabMatchStat as keyof StatMatches][
-																					tabHalfStat as keyof StatMatch
-																				].yellow_over_3_5
-																			}
+																			{tabHalfStat === 'match'
+																				? team.statistics[
+																						tabStat as keyof Statistics
+																				  ][tabMatchStat as keyof StatMatches][
+																						tabHalfStat as keyof StatMatch
+																				  ].yellow_over_3_5
+																				: team.statistics[
+																						tabStat as keyof Statistics
+																				  ][tabMatchStat as keyof StatMatches][
+																						tabHalfStat as keyof StatMatch
+																				  ].yellow_over_1_5}
 																		</div>
 																		<div className="w-full text-center">
-																			{
-																				team.statistics[
-																					tabStat as keyof Statistics
-																				][tabMatchStat as keyof StatMatches][
-																					tabHalfStat as keyof StatMatch
-																				].yellow_over_4_5
-																			}
+																			{tabHalfStat === 'match'
+																				? team.statistics[
+																						tabStat as keyof Statistics
+																				  ][tabMatchStat as keyof StatMatches][
+																						tabHalfStat as keyof StatMatch
+																				  ].yellow_over_4_5
+																				: team.statistics[
+																						tabStat as keyof Statistics
+																				  ][tabMatchStat as keyof StatMatches][
+																						tabHalfStat as keyof StatMatch
+																				  ].yellow_over_2_5}
 																		</div>
 																		<div className="w-full text-center">
-																			{
-																				team.statistics[
-																					tabStat as keyof Statistics
-																				][tabMatchStat as keyof StatMatches][
-																					tabHalfStat as keyof StatMatch
-																				].yellow_over_5_5
-																			}
+																			{tabHalfStat === 'match'
+																				? team.statistics[
+																						tabStat as keyof Statistics
+																				  ][tabMatchStat as keyof StatMatches][
+																						tabHalfStat as keyof StatMatch
+																				  ].yellow_over_5_5
+																				: team.statistics[
+																						tabStat as keyof Statistics
+																				  ][tabMatchStat as keyof StatMatches][
+																						tabHalfStat as keyof StatMatch
+																				  ].yellow_over_3_5}
 																		</div>
 																	</>
 																)}
@@ -837,10 +967,10 @@ export const StandingsAndFixtures = ({
 				</div>
 			</div>
 			<div className="flex justify-center items-center lg:w-2/5 pt-10 lg:pr-10 pb-10 lg:pl-0">
-				<div className="flex flex-col justify-center items-center bg-gradient-to-b from-black/40 w-full h-full text-neutral-100 rounded-3xl">
-					<div className="w-full flex flex-col justify-center items-center">
+				<div className="flex flex-col justify-start items-center bg-gradient-to-b from-black/40 w-full h-full text-neutral-100 rounded-3xl">
+					<div className="w-full flex flex-col justify-start items-center">
 						<div className="p-2 font-bold">Upcoming Matches</div>
-						<div className="w-full h-[77vh] flex flex-col justify-start items-center pb-5 overflow-y-auto">
+						<div className="w-full h-[160vh] flex flex-col justify-start items-center pb-5 overflow-y-auto">
 							{standingsData.map((leagueName, i) => {
 								return (
 									activeTab === i &&
