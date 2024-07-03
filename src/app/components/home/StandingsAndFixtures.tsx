@@ -25,7 +25,7 @@ export const StandingsAndFixtures = ({
 	filteredFixtures: AllFixtures[]
 	standingsDataStat: Standing[][]
 }) => {
-	console.log(standingsData)
+	console.log(standingsDataStat)
 
 	const currentTime = moment()
 	const countSeasons = standingsData[0].length - 1
@@ -930,27 +930,27 @@ export const StandingsAndFixtures = ({
 																			{
 																				team.statistics[
 																					tabStat as keyof Statistics
-																				][tabMatch as keyof StatMatches][
+																				][tabMatchStat as keyof StatMatches][
 																					'match'
-																				].prod_first_over_second
+																				].first_over_second
 																			}
 																		</div>
 																		<div className="w-full text-center">
 																			{
 																				team.statistics[
 																					tabStat as keyof Statistics
-																				][tabMatch as keyof StatMatches][
+																				][tabMatchStat as keyof StatMatches][
 																					'match'
-																				].prod_first_equal_second
+																				].first_equal_second
 																			}
 																		</div>
 																		<div className="w-full text-center">
 																			{
 																				team.statistics[
 																					tabStat as keyof Statistics
-																				][tabMatch as keyof StatMatches][
+																				][tabMatchStat as keyof StatMatches][
 																					'match'
-																				].prod_second_over_first
+																				].second_over_first
 																			}
 																		</div>
 																	</>

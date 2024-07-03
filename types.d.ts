@@ -111,9 +111,9 @@ type Stat = {
 	bs_draw: number
 	bs_lose: number
 	prod_count: number
-	prod_first_over_second: number
-	prod_first_equal_second: number
-	prod_second_over_first: number
+	first_over_second: number
+	first_equal_second: number
+	second_over_first: number
 }
 
 type Games = {
