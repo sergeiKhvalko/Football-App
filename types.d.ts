@@ -96,6 +96,8 @@ type Stat = {
 	total_under_0_5: number
 	total_under_1_5: number
 	total_under_2_5: number
+	total_over_0_5: number
+	total_over_1_5: number
 	total_over_2_5: number
 	total_over_3_5: number
 	total_over_4_5: number

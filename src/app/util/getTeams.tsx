@@ -8,8 +8,10 @@ export default async function getTeams(): Promise<oneTeam[]> {
 		const teams: oneTeam[] = []
 
 		for (const seasons of standings) {
-			for (const team of seasons[0].league.standings) {
-				teams.push(team)
+			if (seasons[0]) {
+				for (const team of seasons[0].league.standings) {
+					teams.push(team)
+				}
 			}
 		}
 		return teams
