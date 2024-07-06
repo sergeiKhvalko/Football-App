@@ -159,9 +159,9 @@ export const TemplateStat = ({
 					<div className="w-3/12"></div>
 					<div className="w-8/12 flex justify-evenly">
 						<div className="w-full text-center">M</div>
-						<div className="w-full text-center text-green-400">1ov2</div>
+						<div className="w-full text-center">1ov2</div>
 						<div className="w-full text-center">1eq2</div>
-						<div className="w-full text-center">2ov1</div>
+						<div className="w-full text-center text-green-400">2ov1</div>
 					</div>
 				</div>
 			)

@@ -45,67 +45,171 @@ export const StandingsAndFixtures = ({
 	const menuRef = useRef<HTMLDivElement>(null)
 	const menuRefStat = useRef<HTMLDivElement>(null)
 
-	const sortCorners = (
+	const sortStats = (
 		statName: string,
 		match: string,
 		half: string,
 		activeTab: number,
 		year: number,
 	) => {
-		if (half === 'match') {
+		if (statName === 'corners') {
+			if (half === 'match') {
+				standingsDataStat[activeTab][year].league.standings.sort(
+					(a: oneTeam, b: oneTeam) =>
+						b.statistics[statName as keyof Statistics][match as keyof Matches][
+							half as keyof Match
+						].corner_over_9_5 -
+						a.statistics[statName as keyof Statistics][match as keyof Matches][
+							half as keyof Match
+						].corner_over_9_5,
+				)
+			} else {
+				standingsDataStat[activeTab][year].league.standings.sort(
+					(a: oneTeam, b: oneTeam) =>
+						b.statistics[statName as keyof Statistics][match as keyof Matches][
+							half as keyof Match
+						].corner_over_4_5 -
+						a.statistics[statName as keyof Statistics][match as keyof Matches][
+							half as keyof Match
+						].corner_over_4_5,
+				)
+			}
+		} else if (statName === 'yellow_cards') {
+			if (half === 'match') {
+				standingsDataStat[activeTab][year].league.standings.sort(
+					(a: oneTeam, b: oneTeam) =>
+						b.statistics[statName as keyof Statistics][match as keyof Matches][
+							half as keyof Match
+						].yellow_over_4_5 -
+						a.statistics[statName as keyof Statistics][match as keyof Matches][
+							half as keyof Match
+						].yellow_over_4_5,
+				)
+			} else {
+				standingsDataStat[activeTab][year].league.standings.sort(
+					(a: oneTeam, b: oneTeam) =>
+						b.statistics[statName as keyof Statistics][match as keyof Matches][
+							half as keyof Match
+						].yellow_over_2_5 -
+						a.statistics[statName as keyof Statistics][match as keyof Matches][
+							half as keyof Match
+						].yellow_over_2_5,
+				)
+			}
+		} else if (statName === 'total') {
+			if (half === 'match') {
+				standingsDataStat[activeTab][year].league.standings.sort(
+					(a: oneTeam, b: oneTeam) =>
+						b.statistics[statName as keyof Statistics][match as keyof Matches][
+							half as keyof Match
+						].total_over_2_5 -
+						a.statistics[statName as keyof Statistics][match as keyof Matches][
+							half as keyof Match
+						].total_over_2_5,
+				)
+			} else {
+				standingsDataStat[activeTab][year].league.standings.sort(
+					(a: oneTeam, b: oneTeam) =>
+						b.statistics[statName as keyof Statistics][match as keyof Matches][
+							half as keyof Match
+						].total_over_1_5 -
+						a.statistics[statName as keyof Statistics][match as keyof Matches][
+							half as keyof Match
+						].total_over_1_5,
+				)
+			}
+		} else if (statName === 'individ_total') {
 			standingsDataStat[activeTab][year].league.standings.sort(
 				(a: oneTeam, b: oneTeam) =>
 					b.statistics[statName as keyof Statistics][match as keyof Matches][
 						half as keyof Match
-					].corner_over_9_5 -
+					].in_total_over_1_5 -
 					a.statistics[statName as keyof Statistics][match as keyof Matches][
 						half as keyof Match
-					].corner_over_9_5,
+					].in_total_over_1_5,
 			)
-		} else {
+		} else if (statName === 'both_score') {
 			standingsDataStat[activeTab][year].league.standings.sort(
 				(a: oneTeam, b: oneTeam) =>
 					b.statistics[statName as keyof Statistics][match as keyof Matches][
 						half as keyof Match
-					].corner_over_4_5 -
+					].bs_yes -
 					a.statistics[statName as keyof Statistics][match as keyof Matches][
 						half as keyof Match
-					].corner_over_4_5,
+					].bs_yes,
+			)
+		} else if (statName === 'productive_half') {
+			standingsDataStat[activeTab][year].league.standings.sort(
+				(a: oneTeam, b: oneTeam) =>
+					b.statistics[statName as keyof Statistics][match as keyof Matches][
+						'match'
+					].second_over_first -
+					a.statistics[statName as keyof Statistics][match as keyof Matches][
+						'match'
+					].second_over_first,
 			)
 		}
 	}
-	// useLayoutEffect(() => {
-	// 	sortCorners(tabStat, tabMatchStat, tabHalfStat)
-	// }, [])
 
-	const sortYellowCards = (
-		statName: string,
-		match: string,
-		half: string,
-		year: number,
-	) => {
-		if (half === 'match') {
-			standingsDataStat[activeTab][year].league.standings.sort(
-				(a: oneTeam, b: oneTeam) =>
-					b.statistics[statName as keyof Statistics][match as keyof Matches][
-						half as keyof Match
-					].yellow_over_4_5 -
-					a.statistics[statName as keyof Statistics][match as keyof Matches][
-						half as keyof Match
-					].yellow_over_4_5,
-			)
-		} else {
-			standingsDataStat[activeTab][year].league.standings.sort(
-				(a: oneTeam, b: oneTeam) =>
-					b.statistics[statName as keyof Statistics][match as keyof Matches][
-						half as keyof Match
-					].yellow_over_2_5 -
-					a.statistics[statName as keyof Statistics][match as keyof Matches][
-						half as keyof Match
-					].yellow_over_2_5,
-			)
-		}
-	}
+	// const sortCorners = (
+	// 	statName: string,
+	// 	match: string,
+	// 	half: string,
+	// 	activeTab: number,
+	// 	year: number,
+	// ) => {
+	// 	if (half === 'match') {
+	// 		standingsDataStat[activeTab][year].league.standings.sort(
+	// 			(a: oneTeam, b: oneTeam) =>
+	// 				b.statistics[statName as keyof Statistics][match as keyof Matches][
+	// 					half as keyof Match
+	// 				].corner_over_9_5 -
+	// 				a.statistics[statName as keyof Statistics][match as keyof Matches][
+	// 					half as keyof Match
+	// 				].corner_over_9_5,
+	// 		)
+	// 	} else {
+	// 		standingsDataStat[activeTab][year].league.standings.sort(
+	// 			(a: oneTeam, b: oneTeam) =>
+	// 				b.statistics[statName as keyof Statistics][match as keyof Matches][
+	// 					half as keyof Match
+	// 				].corner_over_4_5 -
+	// 				a.statistics[statName as keyof Statistics][match as keyof Matches][
+	// 					half as keyof Match
+	// 				].corner_over_4_5,
+	// 		)
+	// 	}
+	// }
+
+	// const sortYellowCards = (
+	// 	statName: string,
+	// 	match: string,
+	// 	half: string,
+	// 	activeTab: number,
+	// 	year: number,
+	// ) => {
+	// 	if (half === 'match') {
+	// 		standingsDataStat[activeTab][year].league.standings.sort(
+	// 			(a: oneTeam, b: oneTeam) =>
+	// 				b.statistics[statName as keyof Statistics][match as keyof Matches][
+	// 					half as keyof Match
+	// 				].yellow_over_4_5 -
+	// 				a.statistics[statName as keyof Statistics][match as keyof Matches][
+	// 					half as keyof Match
+	// 				].yellow_over_4_5,
+	// 		)
+	// 	} else {
+	// 		standingsDataStat[activeTab][year].league.standings.sort(
+	// 			(a: oneTeam, b: oneTeam) =>
+	// 				b.statistics[statName as keyof Statistics][match as keyof Matches][
+	// 					half as keyof Match
+	// 				].yellow_over_2_5 -
+	// 				a.statistics[statName as keyof Statistics][match as keyof Matches][
+	// 					half as keyof Match
+	// 				].yellow_over_2_5,
+	// 		)
+	// 	}
+	// }
 
 	const scrollToTab = (index: number) => {
 		const container = menuRef.current
@@ -133,7 +237,7 @@ export const StandingsAndFixtures = ({
 	}
 
 	const handleTabClick = (index: number) => {
-		sortCorners(tabStat, tabMatchStat, tabHalfStat, index, year)
+		sortStats(tabStat, tabMatchStat, tabHalfStat, index, year)
 		setActiveTab(index)
 		scrollToTab(index)
 	}
@@ -142,11 +246,8 @@ export const StandingsAndFixtures = ({
 	}, [activeTab])
 
 	const handleTabClickStat = (index: number, name: string) => {
-		if (name === 'corners') {
-			sortCorners(name, tabMatchStat, tabHalfStat, activeTab, year)
-		} else if (name === 'yellow_cards') {
-			sortYellowCards(name, tabMatchStat, tabHalfStat, year)
-		} else if (name === 'productive_half') {
+		sortStats(name, tabMatchStat, tabHalfStat, activeTab, year)
+		if (name === 'productive_half') {
 			setTabHalf('match')
 		}
 		setTabStat(name)
@@ -155,12 +256,7 @@ export const StandingsAndFixtures = ({
 	}
 
 	const handleTabClickYear = (index: number, year: number) => {
-		if (tabStat === 'corners') {
-			sortCorners(tabStat, tabMatchStat, tabHalfStat, activeTab, year)
-		}
-		if (tabStat === 'yellow_cards') {
-			sortYellowCards(tabStat, tabMatchStat, tabHalfStat, year)
-		}
+		sortStats(tabStat, tabMatchStat, tabHalfStat, activeTab, year)
 		setYear(year)
 		setActiveTabYears(index)
 	}
@@ -180,11 +276,7 @@ export const StandingsAndFixtures = ({
 		tabStat: string,
 		index: number,
 	) => {
-		if (tabStat === 'corners') {
-			sortCorners(tabStat, match, tabHalfStat, activeTab, year)
-		} else if (tabStat === 'yellow_cards') {
-			sortYellowCards(tabStat, match, tabHalfStat, year)
-		}
+		sortStats(tabStat, match, tabHalfStat, activeTab, year)
 
 		setTabMatchStat(match)
 		setActiveTabMatchStat(index)
@@ -216,11 +308,7 @@ export const StandingsAndFixtures = ({
 		half: string,
 		index: number,
 	) => {
-		if (tabStat === 'corners') {
-			sortCorners(tabStat, tabMatchStat, half, activeTab, year)
-		} else if (tabStat === 'yellow_cards') {
-			sortYellowCards(tabStat, tabMatchStat, half, year)
-		}
+		sortStats(tabStat, tabMatchStat, half, activeTab, year)
 		setTabHalfStat(half)
 		setActiveTabHalfStat(index)
 	}
