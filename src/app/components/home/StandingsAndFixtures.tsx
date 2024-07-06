@@ -25,8 +25,6 @@ export const StandingsAndFixtures = ({
 	filteredFixtures: AllFixtures[]
 	standingsDataStat: Standing[][]
 }) => {
-	console.log(standingsDataStat)
-
 	const currentTime = moment()
 	const countSeasons = standingsData[0].length - 1
 	const [year, setYear] = useState(0)
@@ -150,66 +148,6 @@ export const StandingsAndFixtures = ({
 			)
 		}
 	}
-
-	// const sortCorners = (
-	// 	statName: string,
-	// 	match: string,
-	// 	half: string,
-	// 	activeTab: number,
-	// 	year: number,
-	// ) => {
-	// 	if (half === 'match') {
-	// 		standingsDataStat[activeTab][year].league.standings.sort(
-	// 			(a: oneTeam, b: oneTeam) =>
-	// 				b.statistics[statName as keyof Statistics][match as keyof Matches][
-	// 					half as keyof Match
-	// 				].corner_over_9_5 -
-	// 				a.statistics[statName as keyof Statistics][match as keyof Matches][
-	// 					half as keyof Match
-	// 				].corner_over_9_5,
-	// 		)
-	// 	} else {
-	// 		standingsDataStat[activeTab][year].league.standings.sort(
-	// 			(a: oneTeam, b: oneTeam) =>
-	// 				b.statistics[statName as keyof Statistics][match as keyof Matches][
-	// 					half as keyof Match
-	// 				].corner_over_4_5 -
-	// 				a.statistics[statName as keyof Statistics][match as keyof Matches][
-	// 					half as keyof Match
-	// 				].corner_over_4_5,
-	// 		)
-	// 	}
-	// }
-
-	// const sortYellowCards = (
-	// 	statName: string,
-	// 	match: string,
-	// 	half: string,
-	// 	activeTab: number,
-	// 	year: number,
-	// ) => {
-	// 	if (half === 'match') {
-	// 		standingsDataStat[activeTab][year].league.standings.sort(
-	// 			(a: oneTeam, b: oneTeam) =>
-	// 				b.statistics[statName as keyof Statistics][match as keyof Matches][
-	// 					half as keyof Match
-	// 				].yellow_over_4_5 -
-	// 				a.statistics[statName as keyof Statistics][match as keyof Matches][
-	// 					half as keyof Match
-	// 				].yellow_over_4_5,
-	// 		)
-	// 	} else {
-	// 		standingsDataStat[activeTab][year].league.standings.sort(
-	// 			(a: oneTeam, b: oneTeam) =>
-	// 				b.statistics[statName as keyof Statistics][match as keyof Matches][
-	// 					half as keyof Match
-	// 				].yellow_over_2_5 -
-	// 				a.statistics[statName as keyof Statistics][match as keyof Matches][
-	// 					half as keyof Match
-	// 				].yellow_over_2_5,
-	// 		)
-	// 	}
-	// }
 
 	const scrollToTab = (index: number) => {
 		const container = menuRef.current

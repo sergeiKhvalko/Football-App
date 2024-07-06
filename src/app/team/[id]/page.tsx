@@ -74,18 +74,28 @@ export default async function Team({ params }: PageProps) {
 						</div>
 						<div className="flex w-full justify-center items-center text-xl">
 							<div className="w-full text-center font-bold">
-								{teamInfo.points}
-							</div>
-							<div className="w-full text-center">{teamInfo.all.played}</div>
-							<div className="w-full text-center">{teamInfo.all.win}</div>
-							<div className="w-full text-center">{teamInfo.all.draw}</div>
-							<div className="w-full text-center">{teamInfo.all.lose}</div>
-							<div className="w-full text-center">{teamInfo.all.goals_for}</div>
-							<div className="w-full text-center">
-								{teamInfo.all.goals_against}
+								{teamInfo.matches.summary.match.points}
 							</div>
 							<div className="w-full text-center">
-								{teamInfo.all.goals_diff}
+								{teamInfo.matches.summary.match.played}
+							</div>
+							<div className="w-full text-center">
+								{teamInfo.matches.summary.match.win}
+							</div>
+							<div className="w-full text-center">
+								{teamInfo.matches.summary.match.draw}
+							</div>
+							<div className="w-full text-center">
+								{teamInfo.matches.summary.match.lose}
+							</div>
+							<div className="w-full text-center">
+								{teamInfo.matches.summary.match.goals_for}
+							</div>
+							<div className="w-full text-center">
+								{teamInfo.matches.summary.match.goals_against}
+							</div>
+							<div className="w-full text-center">
+								{teamInfo.matches.summary.match.goals_diff}
 							</div>
 						</div>
 					</div>
