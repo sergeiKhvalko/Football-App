@@ -22,7 +22,7 @@
 # CMD ["npm", "start"]
 
 FROM node:18-alpine as builder
-WORKDIR /football-app
+WORKDIR /
 
 COPY package.json package-lock.json ./
 RUN npm ci
@@ -30,12 +30,12 @@ COPY . .
 RUN npm run build
 
 FROM node:18-alpine as runner
-WORKDIR /football-app
-COPY --from=builder /football-app/package.json .
-COPY --from=builder /football-app/package-lock.json .
-COPY --from=builder /football-app/next.config.js ./
-COPY --from=builder /football-app/public ./public
-COPY --from=builder /football-app/.next/standalone ./
-COPY --from=builder /football-app/.next/static ./.next/static
+WORKDIR /
+COPY --from=builder package.json .
+COPY --from=builder package-lock.json .
+COPY --from=builder next.config.js ./
+COPY --from=builder public ./public
+COPY --from=builder .next/standalone ./
+COPY --from=builder .next/static ./.next/static
 EXPOSE 3000
 ENTRYPOINT ["npm", "start"]
