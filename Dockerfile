@@ -38,4 +38,4 @@ COPY --from=builder ./public ./public
 COPY --from=builder ./.next/standalone ./
 COPY --from=builder ./.next/static ./.next/static
 EXPOSE 3000
-ENTRYPOINT ["npm", "run", "start"]
+CMD ["npm", "run", "start"]
