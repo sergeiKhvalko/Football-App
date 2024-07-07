@@ -6,7 +6,7 @@ RUN npm install
 FROM node:18 as builder
 WORKDIR /Football-App
 COPY . .
-COPY --from=dependencies /football-app/node_modules ./node_modules
+COPY --from=dependencies /Football-App/node_modules ./node_modules
 RUN npm run build
 
 FROM node:18 as runner
