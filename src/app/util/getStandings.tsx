@@ -48,11 +48,11 @@ export default async function getStandings(): Promise<Standing[][]> {
 		// { name: 'Argentina', id: 128 },
 		// { name: 'Brazil', id: 71 },
 	]
-
+	//https://sergeikhvalko-football-app-back-457f.twc1.net/standings?season=2023&league=39
 	for (let league of leagues) {
 		const seasons: Standing[] = []
 		for (let i = year; i > year - 5; i--) {
-			const url = `http://127.0.0.1:8000/standings?season=${i}&league=${league.id}`
+			const url = `${process.env.DOMAIN}/standings?season=${i}&league=${league.id}`
 
 			try {
 				const response = await fetch(url)

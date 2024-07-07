@@ -34,7 +34,7 @@ async function fetchFixturesByLeague(
 	year: number,
 	league: number,
 ): Promise<Fixture[]> {
-	const url = `https://v3.football.api-sports.io/fixtures?league=${league}&season=${year}`
+	const url = `${process.env.DOMAINFIXURES}/fixtures?league=${league}&season=${year}`
 	const options = {
 		method: 'GET',
 		headers: {
