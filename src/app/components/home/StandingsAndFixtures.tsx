@@ -278,9 +278,9 @@ export const StandingsAndFixtures = ({
 	}, [activeTab])
 
 	return (
-		<div className="flex flex-col w-full max-w-7xl bg-gradient-to-br from-sky-800/75 to-sky-800/25 lg:flex-row">
-			<div className="flex flex-col justify-center items-center lg:w-3/5 md:p-10 py-5">
-				<div className="flex flex-col justify-center items-center bg-gradient-to-b from-black/40 w-full text-neutral-100 rounded-3xl">
+		<div className="flex flex-col w-full max-w-7xl bg-gradient-to-br from-sky-800/75 to-sky-800/25 lg:flex-row lg:items-start">
+			<div className="flex flex-col justify-center items-center px-2 lg:w-3/5 md:p-10 py-5">
+				<div className="flex flex-col justify-center items-center px-2 bg-gradient-to-b from-black/40 w-full text-neutral-100 rounded-3xl">
 					<div className="flex flex-col w-full justify-center items-center">
 						<div className="p-2 font-bold">STANDING</div>
 						<div className="flex justify-start w-full gap-2 overflow-x-auto">
@@ -308,8 +308,8 @@ export const StandingsAndFixtures = ({
 								.map((season, j) => (
 									<button
 										key={j}
-										className={`mt-3 w-full flex justify-center items-center p-4 rounded-t-lg bg-red
-										${j === activeTabYears ? 'opacity-100' : 'bg-black/100 opacity-50'}`}
+										className={`mt-3 w-full flex justify-center items-center p-2 rounded-[8px]
+										${j === activeTabYears ? 'opacity-100 bg-red-800' : 'bg-gray-950 opacity-50'}`}
 										onClick={() =>
 											handleTabClickYear(
 												j,
@@ -321,20 +321,24 @@ export const StandingsAndFixtures = ({
 									</button>
 								))}
 						</div>
+
 						<div className="flex self-start gap-2">
 							{standingsData[0][0].league.standings[0].matches &&
 								Object.keys(
 									standingsData[0][0].league.standings[0].matches,
 								).map((match, i) => (
-									<div key={match + i}>
-										<button
-											className={`mt-3 w-full flex justify-center items-center p-4 rounded-t-lg bg-red
-												${i === activeTabMatch ? 'opacity-100' : 'bg-black/100 opacity-50'}`}
-											onClick={() => handleTabClickMatch(match, i)}
-										>
-											{match}
-										</button>
-									</div>
+									<button
+										key={match + i}
+										className={`mt-3 w-full flex justify-center items-center p-2 rounded-[8px] text-lg font-bold
+										${
+											i === activeTabMatch
+												? 'opacity-100 border-b-4 border-red-800'
+												: 'opacity-30'
+										}`}
+										onClick={() => handleTabClickMatch(match, i)}
+									>
+										{match}
+									</button>
 								))}
 						</div>
 						<div className="flex self-start gap-2">
@@ -344,11 +348,15 @@ export const StandingsAndFixtures = ({
 								).map((half, i) => (
 									<button
 										key={half + i}
-										className={`mt-3 w-full flex justify-center items-center p-4 rounded-t-lg bg-red
-												${i === activeTabHalf ? 'opacity-100' : 'bg-black/100 opacity-50'}`}
+										className={`mt-3 w-full flex justify-center items-center p-2 rounded-[8px] text-lg font-bold whitespace-nowrap
+										${
+											i === activeTabHalf
+												? 'opacity-100 border-b-4 border-red-800'
+												: 'opacity-30'
+										}`}
 										onClick={() => handleTabClickHalf(half, i)}
 									>
-										{half}
+										{half.replace('_', ' ')}
 									</button>
 								))}
 						</div>
@@ -361,7 +369,7 @@ export const StandingsAndFixtures = ({
 									key={i}
 									className="flex flex-col justify-center items-center flex-shrink-0 w-full snap-center"
 								>
-									<div className="flex flex-col justify-between w-full p-2">
+									<div className="flex flex-col justify-between w-full py-2">
 										<div className="flex w-full p-1">
 											<div className="w-1/12"></div>
 											<div className="w-3/12"></div>
@@ -458,7 +466,7 @@ export const StandingsAndFixtures = ({
 																	<div
 																		key={char + i}
 																		title={team.form.info.slice(-5)[i]}
-																		className={`opacity-80 w-5 h-5 m-[1px] flex justify-center items-center font-bold
+																		className={`opacity-80 w-3 h-3 m-[1px] flex justify-center items-center font-bold sm:w-5 sm:h-5
                               ${
 																char === 'L'
 																	? 'bg-red-500'
@@ -480,7 +488,7 @@ export const StandingsAndFixtures = ({
 						</div>
 					</div>
 					<div className="flex flex-col w-full justify-center items-center">
-						<div className="p-2 font-bold">STATICS STANDING</div>
+						<div className="p-2 font-bold">STATISTICS STANDING</div>
 						<div className="flex justify-start w-full gap-2 overflow-x-auto">
 							{standingsData[activeTab][year].league.standings.length &&
 								Object.keys(
@@ -508,8 +516,8 @@ export const StandingsAndFixtures = ({
 								.map((season, j) => (
 									<button
 										key={j}
-										className={`mt-3 w-full flex justify-center items-center p-4 rounded-t-lg bg-red
-										${j === activeTabYears ? 'opacity-100' : 'bg-black/100 opacity-50'}`}
+										className={`mt-3 w-full flex justify-center items-center p-2 rounded-[8px]
+										${j === activeTabYears ? 'opacity-100 bg-red-800' : 'bg-gray-950 opacity-50'}`}
 										onClick={() =>
 											handleTabClickYear(
 												j,
@@ -528,8 +536,12 @@ export const StandingsAndFixtures = ({
 								).map((matchStat, i) => (
 									<div key={matchStat + i}>
 										<button
-											className={`mt-3 w-full flex justify-center items-center p-4 rounded-t-lg bg-red
-												${i === activeTabMatchStat ? 'opacity-100' : 'bg-black/100 opacity-50'}`}
+											className={`mt-3 w-full flex justify-center items-center p-2 rounded-[8px] text-lg font-bold
+										${
+											i === activeTabMatchStat
+												? 'opacity-100 border-b-4 border-red-800'
+												: 'opacity-30'
+										}`}
 											onClick={() =>
 												handleTabClickMatchStat(matchStat, tabStat, i)
 											}
@@ -548,15 +560,19 @@ export const StandingsAndFixtures = ({
 								).map((halfStat, i) => (
 									<button
 										key={halfStat + i}
-										className={`mt-3 w-full flex justify-center items-center p-4 rounded-t-lg bg-red
-												${i === activeTabHalfStat ? 'opacity-100' : 'bg-black/100 opacity-50'}
+										className={`mt-3 w-full flex justify-center items-center p-2 rounded-[8px] text-lg font-bold whitespace-nowrap
+										${
+											i === activeTabHalfStat
+												? 'opacity-100 border-b-4 border-red-800'
+												: 'opacity-30'
+										}
 												${tabStat === 'productive_half' ? 'hidden' : ''}`}
 										onClick={() =>
 											handleTabClickHalfStat(tabStat, tabMatchStat, halfStat, i)
 										}
 										disabled={tabStat === 'productive_half'}
 									>
-										{halfStat}
+										{halfStat.replace('_', ' ')}
 									</button>
 								))}
 						</div>
@@ -573,7 +589,7 @@ export const StandingsAndFixtures = ({
 										key={stat + i}
 										className="flex flex-col justify-center items-center flex-shrink-0 w-full snap-center"
 									>
-										<div className="flex flex-col justify-between w-full p-2">
+										<div className="flex flex-col justify-between w-full py-2">
 											<TemplateStat stat={stat} half={tabHalfStat} />
 											{standingsDataStat[activeTab][year].league.standings
 												.length &&
@@ -1024,11 +1040,11 @@ export const StandingsAndFixtures = ({
 					</div>
 				</div>
 			</div>
-			<div className="flex justify-center items-center lg:w-2/5 pt-10 lg:pr-10 pb-10 lg:pl-0">
+			<div className="flex justify-center items-center px-2 lg:w-2/5 pt-10 lg:pr-10 pb-10 lg:pl-0">
 				<div className="flex flex-col justify-start items-center bg-gradient-to-b from-black/40 w-full h-full text-neutral-100 rounded-3xl">
 					<div className="w-full flex flex-col justify-start items-center">
 						<div className="p-2 font-bold">Upcoming Matches</div>
-						<div className="w-full h-[160vh] flex flex-col justify-start items-center pb-5 overflow-y-auto">
+						<div className="w-full h-[180vh] flex flex-col justify-start items-center pb-5 overflow-y-auto">
 							{standingsData.map((leagueName, i) => {
 								return (
 									activeTab === i &&
@@ -1051,3 +1067,8 @@ export const StandingsAndFixtures = ({
 		</div>
 	)
 }
+// 'bg-black/100 opacity-50' // align-items: center;
+//background-color: var(--color-tabs-secondary-background-base);
+//border-radius: 8px;
+// color: var(--color-tabs-secondary-fill-base);
+// display: flex; // gap: 8px; // height: 28px; // padding: 0 12px;

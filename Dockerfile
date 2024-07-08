@@ -42,7 +42,7 @@
 
 FROM node:18-alpine AS build
 
-WORKDIR /football-app
+WORKDIR /football-app/src/app
 COPY package*.json ./
 RUN npm ci
 COPY . .
@@ -50,7 +50,7 @@ RUN npm run build
 
 FROM node:18-alpine AS runtime
 
-WORKDIR /football-app
+WORKDIR /football-app/src/app
 COPY package*.json ./
 RUN npm ci --only=production
 COPY --from=build /football-app/.next ./.next
