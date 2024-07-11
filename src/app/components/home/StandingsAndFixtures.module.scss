@@ -1,0 +1,41 @@
+.statsBtn {
+	position: relative;
+	z-index: 1;
+
+	&:hover {
+		& > .statsTooltip {
+			top: 20%;
+
+			opacity: 1;
+
+			transition: all 0.5s ease;
+		}
+	}
+}
+
+.statsTooltip {
+	pointer-events: none;
+
+	position: absolute;
+	top: 0px;
+	left: 50px;
+	transform: translate(-50%, -50%);
+
+	display: block;
+
+	width: 122px;
+	height: 35px;
+
+	line-height: 35px;
+	color: white;
+	text-align: center;
+
+	opacity: 0;
+	background: #11101d;
+	border: 1px solid #2e344e;
+	border-radius: 6px;
+	box-shadow: 0 5px 10px rgba(0, 0, 0, 20%);
+
+	transition: 0s;
+	z-index: 99999;
+}

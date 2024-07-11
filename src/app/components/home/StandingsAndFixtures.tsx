@@ -15,6 +15,7 @@ import FixturesByLeague from './FixturesByLeague'
 import Image from 'next/image'
 import moment from 'moment'
 import { TemplateStat } from './TemplateStat'
+import styles from './StandingsAndFixtures.module.scss'
 
 export const StandingsAndFixtures = ({
 	standingsData,
@@ -489,25 +490,32 @@ export const StandingsAndFixtures = ({
 					</div>
 					<div className="flex flex-col w-full justify-center items-center">
 						<div className="p-2 font-bold">STATISTICS STANDING</div>
-						<div className="flex justify-start w-full gap-2 overflow-x-auto">
+						<div className="flex justify-start w-full gap-2 overflow-auto">
 							{standingsData[activeTab][year].league.standings.length &&
 								Object.keys(
 									standingsData[activeTab][year].league.standings[0].statistics,
 								).map((name, i) => (
-									<button
-										key={name + i}
-										className={`flex justify-center items-center shrink-0 p-4 rounded-lg
-								${i === activeTabStat ? 'opacity-100' : 'bg-black/100 opacity-50'}`}
-										onClick={() => handleTabClickStat(i, name)}
-										onMouseOver={() => handleMouseLeave(name)}
-									>
-										<Image
-											src={`/${name}.png`}
-											alt={name}
-											width={70}
-											height={60}
-										/>
-									</button>
+									<>
+										<button
+											key={name + i}
+											className={`flex justify-center items-center shrink-0 p-4 rounded-lg
+								${i === activeTabStat ? 'opacity-100' : 'bg-black/100 opacity-50'}
+								${styles.statsBtn}
+								`}
+											onClick={() => handleTabClickStat(i, name)}
+											onMouseOver={() => handleMouseLeave(name)}
+										>
+											<Image
+												src={`/${name}.png`}
+												alt={name}
+												width={70}
+												height={60}
+											/>
+											<span className={styles.statsTooltip}>
+												{name.replace('_', ' ')}
+											</span>
+										</button>
+									</>
 								))}
 						</div>
 						<div className="flex justify-center w-full gap-2">

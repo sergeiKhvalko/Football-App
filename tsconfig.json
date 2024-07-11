@@ -34,7 +34,7 @@
 	"include": [
 		"next-env-custom.d.ts",
 		"images.d.ts",
-		// "next-env.d.ts",
+		"css.d.ts",
 		"**/*.ts",
 		"**/*.tsx",
 		".next/types/**/*.ts"
