@@ -6,7 +6,7 @@ export default async function getStandings(): Promise<Standing[][]> {
 	const month = currentTime.month()
 	let year: number
 
-	if (month <= 6) {
+	if (month < 6) {
 		year = currentTime.year() - 1
 	} else {
 		year = currentTime.year()
@@ -30,15 +30,15 @@ export default async function getStandings(): Promise<Standing[][]> {
 
 	const leagues = [
 		{ name: 'RPL', id: 235 },
-		{ name: 'EPL', id: 39 },
-		{ name: 'Championship', id: 40 },
-		{ name: 'BundesLiga', id: 78 },
+		// { name: 'EPL', id: 39 },
+		// { name: 'Championship', id: 40 },
+		// { name: 'BundesLiga', id: 78 },
 		// { name: '2BundesLiga', id: 79 },
-		{ name: 'Serie A', id: 135 },
+		// { name: 'Serie A', id: 135 },
 		// { name: 'Serie B', id: 136 },
-		{ name: 'La Liga', id: 140 },
+		// { name: 'La Liga', id: 140 },
 		// { name: 'Segunda', id: 141 },
-		{ name: 'Ligue1', id: 61 },
+		// { name: 'Ligue1', id: 61 },
 		// { name: 'Ligue2', id: 62 },
 		// { name: 'Primeira', id: 94 },
 		// { name: 'Eredivisie', id: 88 },
@@ -51,12 +51,13 @@ export default async function getStandings(): Promise<Standing[][]> {
 	//https://sergeikhvalko-football-app-back-457f.twc1.net/standings?season=2023&league=39
 	for (let league of leagues) {
 		const seasons: Standing[] = []
-		for (let i = year; i > year - 5; i--) {
+		for (let i = year; i > year - 6; i--) {
 			const url = `${process.env.DOMAIN}/standings?season=${i}&league=${league.id}`
 
 			try {
 				const response = await fetch(url)
 				const data = await response.json()
+				console.log(data.response[0])
 
 				seasons.push(data.response[0])
 			} catch (err) {

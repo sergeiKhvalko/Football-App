@@ -308,13 +308,13 @@ export const StandingsAndFixtures = ({
 								.map((item, index, array) => array[array.length - 1 - index])
 								.map((season, j) => (
 									<button
-										key={j}
+										key={+season}
 										className={`mt-3 w-full flex justify-center items-center p-2 rounded-[8px]
 										${j === activeTabYears ? 'opacity-100 bg-red-800' : 'bg-gray-950 opacity-50'}`}
 										onClick={() =>
 											handleTabClickYear(
 												j,
-												currentTime.year() - 1 - season.league.season,
+												currentTime.year() - season.league.season,
 											)
 										}
 									>
@@ -488,6 +488,7 @@ export const StandingsAndFixtures = ({
 							))}
 						</div>
 					</div>
+					// STATISTICS
 					<div className="flex flex-col w-full justify-center items-center">
 						<div className="p-2 font-bold">STATISTICS STANDING</div>
 						<div className="flex justify-start w-full gap-2 overflow-auto">
@@ -495,27 +496,25 @@ export const StandingsAndFixtures = ({
 								Object.keys(
 									standingsData[activeTab][year].league.standings[0].statistics,
 								).map((name, i) => (
-									<>
-										<button
-											key={name + i}
-											className={`flex justify-center items-center shrink-0 p-4 rounded-lg
+									<button
+										key={name + i}
+										className={`flex justify-center items-center shrink-0 p-4 rounded-lg
 								${i === activeTabStat ? 'opacity-100' : 'bg-black/100 opacity-50'}
 								${styles.statsBtn}
 								`}
-											onClick={() => handleTabClickStat(i, name)}
-											onMouseOver={() => handleMouseLeave(name)}
-										>
-											<Image
-												src={`/${name}.png`}
-												alt={name}
-												width={70}
-												height={60}
-											/>
-											<span className={styles.statsTooltip}>
-												{name.replace('_', ' ')}
-											</span>
-										</button>
-									</>
+										onClick={() => handleTabClickStat(i, name)}
+										onMouseOver={() => handleMouseLeave(name)}
+									>
+										<Image
+											src={`/${name}.png`}
+											alt={name}
+											width={70}
+											height={60}
+										/>
+										<span className={styles.statsTooltip}>
+											{name.replace('_', ' ')}
+										</span>
+									</button>
 								))}
 						</div>
 						<div className="flex justify-center w-full gap-2">
@@ -523,13 +522,13 @@ export const StandingsAndFixtures = ({
 								.map((item, index, array) => array[array.length - 1 - index])
 								.map((season, j) => (
 									<button
-										key={j}
+										key={j + +season}
 										className={`mt-3 w-full flex justify-center items-center p-2 rounded-[8px]
 										${j === activeTabYears ? 'opacity-100 bg-red-800' : 'bg-gray-950 opacity-50'}`}
 										onClick={() =>
 											handleTabClickYear(
 												j,
-												currentTime.year() - 1 - season.league.season,
+												currentTime.year() - season.league.season,
 											)
 										}
 									>
