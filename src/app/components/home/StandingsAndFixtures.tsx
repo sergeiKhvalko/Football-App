@@ -488,7 +488,7 @@ export const StandingsAndFixtures = ({
 							))}
 						</div>
 					</div>
-					// STATISTICS
+
 					<div className="flex flex-col w-full justify-center items-center">
 						<div className="p-2 font-bold">STATISTICS STANDING</div>
 						<div className="flex justify-start w-full gap-2 overflow-auto">
