@@ -11,7 +11,7 @@ export default async function Home() {
 	const standingsDataStat: Standing[][] = JSON.parse(
 		JSON.stringify(standingsData),
 	)
-	standingsDataStat[0][0].league.standings.sort(
+	standingsDataStat[0][0]?.league?.standings?.sort(
 		(a: oneTeam, b: oneTeam) =>
 			b.statistics['corners']['summary']['match'].corner_over_9_5 -
 			a.statistics['corners']['summary']['match'].corner_over_9_5,

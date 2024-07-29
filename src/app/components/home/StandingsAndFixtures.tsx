@@ -16,6 +16,7 @@ import Image from 'next/image'
 import moment from 'moment'
 import { TemplateStat } from './TemplateStat'
 import styles from './StandingsAndFixtures.module.scss'
+import { shortTeamNames } from '../../data/shortTeamNames'
 
 export const StandingsAndFixtures = ({
 	standingsData,
@@ -222,13 +223,10 @@ export const StandingsAndFixtures = ({
 	}
 
 	const handleMouseLeave = (name: string) => {
-		console.log('118---', name)
-
 		if (name === 'productive_half') {
 			setTabHalfStat('match')
 			setActiveTabHalfStat(0)
 		}
-		console.log('123---', tabHalfStat)
 	}
 
 	const handleTabClickHalf = (half: string, index: number) => {
@@ -289,13 +287,13 @@ export const StandingsAndFixtures = ({
 								<button
 									key={i}
 									className={`flex justify-center items-center shrink-0 p-4 rounded-lg bg-${
-										item[year].league.flag
+										item[year].league?.flag
 									}
 								${i === activeTab ? 'opacity-100' : 'bg-black/100 opacity-50'}`}
 									onClick={() => handleTabClick(i)}
 								>
 									<Image
-										src={item[year].league.logo}
+										src={item[year].league?.logo}
 										alt="teamLogo"
 										width={70}
 										height={60}
@@ -318,15 +316,15 @@ export const StandingsAndFixtures = ({
 											)
 										}
 									>
-										{season.league.season}
+										{season.league?.season}
 									</button>
 								))}
 						</div>
 
 						<div className="flex self-start gap-2">
-							{standingsData[0][0].league.standings[0].matches &&
+							{standingsData[0][0].league?.standings[0].matches &&
 								Object.keys(
-									standingsData[0][0].league.standings[0].matches,
+									standingsData[0][0].league?.standings[0].matches,
 								).map((match, i) => (
 									<button
 										key={match + i}
@@ -343,7 +341,7 @@ export const StandingsAndFixtures = ({
 								))}
 						</div>
 						<div className="flex self-start gap-2">
-							{standingsData[0][0].league.standings[0].matches.summary &&
+							{standingsData[0][0].league?.standings[0].matches.summary &&
 								Object.keys(
 									standingsData[0][0].league.standings[0].matches.summary,
 								).map((half, i) => (
@@ -399,64 +397,48 @@ export const StandingsAndFixtures = ({
 															{j + 1}
 														</div>
 														<div className="flex items-center w-3/12 text-xs md:text-base lg:text-lg">
-															{team.name}
+															{shortTeamNames[team.name]}
 														</div>
 														<div className="flex justify-center items-center w-6/12">
 															<div className="w-full text-center">
-																{
-																	team.matches[tabMatch as keyof Matches][
-																		tabHalf as keyof Match
-																	].played
-																}
+																{team.matches[tabMatch as keyof Matches][
+																	tabHalf as keyof Match
+																].played || 0}
 															</div>
 															<div className="w-full text-center">
-																{
-																	team.matches[tabMatch as keyof Matches][
-																		tabHalf as keyof Match
-																	].win
-																}
+																{team.matches[tabMatch as keyof Matches][
+																	tabHalf as keyof Match
+																].win || 0}
 															</div>
 															<div className="w-full text-center">
-																{
-																	team.matches[tabMatch as keyof Matches][
-																		tabHalf as keyof Match
-																	].draw
-																}
+																{team.matches[tabMatch as keyof Matches][
+																	tabHalf as keyof Match
+																].draw || 0}
 															</div>
 															<div className="w-full text-center">
-																{
-																	team.matches[tabMatch as keyof Matches][
-																		tabHalf as keyof Match
-																	].lose
-																}
+																{team.matches[tabMatch as keyof Matches][
+																	tabHalf as keyof Match
+																].lose || 0}
 															</div>
 															<div className="w-full text-center font-bold">
-																{
-																	team.matches[tabMatch as keyof Matches][
-																		tabHalf as keyof Match
-																	].points
-																}
+																{team.matches[tabMatch as keyof Matches][
+																	tabHalf as keyof Match
+																].points || 0}
 															</div>
 															<div className="w-full text-center">
-																{
-																	team.matches[tabMatch as keyof Matches][
-																		tabHalf as keyof Match
-																	].goals_for
-																}
+																{team.matches[tabMatch as keyof Matches][
+																	tabHalf as keyof Match
+																].goals_for || 0}
 															</div>
 															<div className="w-full text-center">
-																{
-																	team.matches[tabMatch as keyof Matches][
-																		tabHalf as keyof Match
-																	].goals_against
-																}
+																{team.matches[tabMatch as keyof Matches][
+																	tabHalf as keyof Match
+																].goals_against || 0}
 															</div>
 															<div className="w-full text-center">
-																{
-																	team.matches[tabMatch as keyof Matches][
-																		tabHalf as keyof Match
-																	].goals_diff
-																}
+																{team.matches[tabMatch as keyof Matches][
+																	tabHalf as keyof Match
+																].goals_diff || 0}
 															</div>
 														</div>
 														<div className="w-2/12 flex justify-center items-center">
@@ -612,7 +594,7 @@ export const StandingsAndFixtures = ({
 																{j + 1}
 															</div>
 															<div className="flex items-center w-3/12 text-xs md:text-base lg:text-lg">
-																{team.name}
+																{shortTeamNames[team.name]}
 															</div>
 															<div className="flex justify-center items-center w-8/12">
 																<div className="w-full text-center">
