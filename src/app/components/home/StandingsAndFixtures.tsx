@@ -17,6 +17,7 @@ import moment from 'moment'
 import { TemplateStat } from './TemplateStat'
 import styles from './StandingsAndFixtures.module.scss'
 import { shortTeamNames } from '../../data/shortTeamNames'
+import { v4 as uuid } from 'uuid'
 
 export const StandingsAndFixtures = ({
 	standingsData,
@@ -285,7 +286,7 @@ export const StandingsAndFixtures = ({
 						<div className="flex justify-start w-full gap-2 overflow-x-auto">
 							{standingsData.map((item, i) => (
 								<button
-									key={i}
+									key={uuid()}
 									className={`flex justify-center items-center shrink-0 p-4 rounded-lg bg-${
 										item[year].league?.flag
 									}
@@ -306,7 +307,7 @@ export const StandingsAndFixtures = ({
 								.map((item, index, array) => array[array.length - 1 - index])
 								.map((season, j) => (
 									<button
-										key={+season}
+										key={uuid()}
 										className={`mt-3 w-full flex justify-center items-center p-2 rounded-[8px]
 										${j === activeTabYears ? 'opacity-100 bg-red-800' : 'bg-gray-950 opacity-50'}`}
 										onClick={() =>
@@ -327,7 +328,7 @@ export const StandingsAndFixtures = ({
 									standingsData[0][0].league?.standings[0].matches,
 								).map((match, i) => (
 									<button
-										key={match + i}
+										key={uuid()}
 										className={`mt-3 w-full flex justify-center items-center p-2 rounded-[8px] text-lg font-bold
 										${
 											i === activeTabMatch
@@ -346,7 +347,7 @@ export const StandingsAndFixtures = ({
 									standingsData[0][0].league.standings[0].matches.summary,
 								).map((half, i) => (
 									<button
-										key={half + i}
+										key={uuid()}
 										className={`mt-3 w-full flex justify-center items-center p-2 rounded-[8px] text-lg font-bold whitespace-nowrap
 										${
 											i === activeTabHalf
@@ -365,7 +366,7 @@ export const StandingsAndFixtures = ({
 						>
 							{standingsData.map((responseData, i) => (
 								<div
-									key={i}
+									key={uuid()}
 									className="flex flex-col justify-center items-center flex-shrink-0 w-full snap-center"
 								>
 									<div className="flex flex-col justify-between w-full py-2">
@@ -389,7 +390,7 @@ export const StandingsAndFixtures = ({
 												(team: oneTeam, j) => (
 													<Link
 														href={`/team/${team.id}`}
-														key={team.id}
+														key={uuid()}
 														className={`flex w-full p-1 hover:bg-red-800/50
 											${j % 2 === 0 ? 'bg-black/40' : ''}`}
 													>
@@ -447,7 +448,7 @@ export const StandingsAndFixtures = ({
 																.slice(-5)
 																.map((char, i) => (
 																	<div
-																		key={char + i}
+																		key={uuid()}
 																		title={team.form.info.slice(-5)[i]}
 																		className={`opacity-80 w-3 h-3 m-[1px] flex justify-center items-center font-bold sm:w-5 sm:h-5
                               ${
@@ -479,7 +480,7 @@ export const StandingsAndFixtures = ({
 									standingsData[activeTab][year].league.standings[0].statistics,
 								).map((name, i) => (
 									<button
-										key={name + i}
+										key={uuid()}
 										className={`flex justify-center items-center shrink-0 p-4 rounded-lg
 								${i === activeTabStat ? 'opacity-100' : 'bg-black/100 opacity-50'}
 								${styles.statsBtn}
@@ -504,7 +505,7 @@ export const StandingsAndFixtures = ({
 								.map((item, index, array) => array[array.length - 1 - index])
 								.map((season, j) => (
 									<button
-										key={j + +season}
+										key={uuid()}
 										className={`mt-3 w-full flex justify-center items-center p-2 rounded-[8px]
 										${j === activeTabYears ? 'opacity-100 bg-red-800' : 'bg-gray-950 opacity-50'}`}
 										onClick={() =>
@@ -523,7 +524,7 @@ export const StandingsAndFixtures = ({
 								Object.keys(
 									standingsData[0][0].league.standings[0].matches,
 								).map((matchStat, i) => (
-									<div key={matchStat + i}>
+									<div key={uuid()}>
 										<button
 											className={`mt-3 w-full flex justify-center items-center p-2 rounded-[8px] text-lg font-bold
 										${
@@ -548,7 +549,7 @@ export const StandingsAndFixtures = ({
 										.summary,
 								).map((halfStat, i) => (
 									<button
-										key={halfStat + i}
+										key={uuid()}
 										className={`mt-3 w-full flex justify-center items-center p-2 rounded-[8px] text-lg font-bold whitespace-nowrap
 										${
 											i === activeTabHalfStat
@@ -575,7 +576,7 @@ export const StandingsAndFixtures = ({
 										.statistics,
 								).map((stat: string, i) => (
 									<div
-										key={stat + i}
+										key={uuid()}
 										className="flex flex-col justify-center items-center flex-shrink-0 w-full snap-center"
 									>
 										<div className="flex flex-col justify-between w-full py-2">
@@ -586,7 +587,7 @@ export const StandingsAndFixtures = ({
 													(team: oneTeam, j: number) => (
 														<Link
 															href={`/team/${team.id}`}
-															key={team.id}
+															key={uuid()}
 															className={`flex w-full p-1 hover:bg-red-800/50
 											${j % 2 === 0 ? 'bg-black/40' : ''}`}
 														>
@@ -1042,7 +1043,7 @@ export const StandingsAndFixtures = ({
 											return (
 												<FixturesByLeague
 													fixturesData={league.fixtures}
-													key={league.name + j}
+													key={uuid()}
 												/>
 											)
 										}

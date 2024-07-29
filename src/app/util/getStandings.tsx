@@ -53,32 +53,6 @@ export default async function getStandings(): Promise<Standing[][]> {
 		// const seasons: Standing[] = []
 		const seasons: any = []
 		for (let i = year; i > year - 6; i--) {
-			// if (i === 2024) {
-			// 	if (league.id === 39) {
-			// 		seasons.push(epl2024[0])
-			// 		continue
-			// 	}
-			// 	if (league.id === 40) {
-			// 		seasons.push(epl2024[0])
-			// 		continue
-			// 	}
-			// 	if (league.id === 78) {
-			// 		seasons.push(epl2024[0])
-			// 		continue
-			// 	}
-			// 	if (league.id === 135) {
-			// 		seasons.push(epl2024[0])
-			// 		continue
-			// 	}
-			// 	if (league.id === 140) {
-			// 		seasons.push(epl2024[0])
-			// 		continue
-			// 	}
-			// 	if (league.id === 61) {
-			// 		seasons.push(epl2024[0])
-			// 		continue
-			// 	}
-			// }
 			const url = `${process.env.DOMAIN}/standings?season=${i}&league=${league.id}`
 
 			try {
