@@ -6,11 +6,13 @@ import getStandings from './util/getStandings'
 export const revalidate = 60
 
 export default async function Home() {
-	const standingsData: Standing[][] = await getStandings()
+	// const [standingsData, filteredFixtures] = await Promise.all([await getStandings(), await getFixturesForLeagues()])
+	const initStandingsData: Standing[][] = await getStandings()
 	const filteredFixtures: AllFixtures[] = await getFixturesForLeagues()
 	const standingsDataStat: Standing[][] = JSON.parse(
-		JSON.stringify(standingsData),
+		JSON.stringify(initStandingsData),
 	)
+
 	standingsDataStat[0][0]?.league?.standings?.sort(
 		(a: oneTeam, b: oneTeam) =>
 			b.statistics['corners']['summary']['match'].corner_over_9_5 -
@@ -22,7 +24,7 @@ export default async function Home() {
 	return (
 		<main className="flex flex-col w-full justify-center items-center md:p-10">
 			<StandingsAndFixtures
-				standingsData={standingsData}
+				initStandingsData={initStandingsData}
 				filteredFixtures={filteredFixtures}
 				standingsDataStat={standingsDataStat}
 			/>

@@ -9,13 +9,14 @@ export default async function getFixturesForLeagues(): Promise<AllFixtures[]> {
 		const fixturesLeague: AllFixtures[] = []
 		for (const league of allFixturesByLeague) {
 			if (
-				league.name === 'RPL' ||
-				league.name === 'Premier League' ||
-				league.name === 'Championship' ||
-				league.name === 'BundesLiga' ||
-				league.name === 'Serie A' ||
-				league.name === 'La Liga' ||
-				league.name === 'Ligue1'
+				league.name === 'RPL'
+				// league.name === 'FNL' ||
+				// league.name === 'Premier League' ||
+				// league.name === 'Championship' ||
+				// league.name === 'BundesLiga' ||
+				// league.name === 'Serie A' ||
+				// league.name === 'La Liga' ||
+				// league.name === 'Ligue1'
 			) {
 				fixturesLeague.push(league)
 			}
