@@ -6,10 +6,10 @@ const API_KEY = process.env.API_KEY as string
 const leagues = [
 	{ league: 235, name: 'RPL' },
 	{ league: 236, name: 'FNL' },
-	// { league: 39, name: 'Premier League' },
+	{ league: 39, name: 'Premier League' },
 	// { league: 40, name: 'Championship' },
 	// { league: 78, name: 'BundesLiga' },
-	// { league: 79, name: '2BundesLiga' },
+	{ league: 79, name: '2BundesLiga' },
 	// { league: 135, name: 'Serie A' },
 	// { league: 140, name: 'La Liga' },
 	// { league: 61, name: 'Ligue1' },

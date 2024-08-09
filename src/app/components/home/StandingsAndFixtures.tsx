@@ -627,23 +627,6 @@ export const StandingsAndFixtures = memo(
 									))}
 							</div>
 							<div className="flex justify-center w-full gap-2">
-								{/* {standingsData[0]
-									.map((item, index, array) => array[array.length - 1 - index])
-									.map((season, j) => (
-										<button
-											key={uuid()}
-											className={`mt-3 w-full flex justify-center items-center p-2 rounded-[8px]
-										${j === activeTabSeason ? 'opacity-100 bg-red-800' : 'bg-gray-950 opacity-50'}`}
-											onClick={() =>
-												handleTabClickSeason(
-													j,
-													currentYear - season
-												)
-											}
-										>
-											{season.league.season}
-										</button>
-									))} */}
 								{allSeasons.map((season, i) => (
 									<button
 										key={uuid()}
@@ -1178,21 +1161,21 @@ export const StandingsAndFixtures = memo(
 						<div className="w-full flex flex-col justify-start items-center">
 							<div className="p-2 font-bold">Upcoming Matches</div>
 							<div className="w-full h-[180vh] flex flex-col justify-start items-center pb-5 overflow-y-auto">
-								{/* {standingsData.map((leagueName, i) => {
-								return (
-									activeTab === i &&
-									filteredFixtures.map((league, j) => {
-										if (league.name === leagueName[year].league.name) {
-											return (
-												<FixturesByLeague
-													fixturesData={league.fixtures}
-													key={uuid()}
-												/>
-											)
-										}
-									})
-								)
-							})} */}
+								{standingsData.map((leagueName, i) => {
+									return (
+										activeTabLeague === i &&
+										filteredFixtures.map((league, j) => {
+											if (league.name === leagueName[0].league.name) {
+												return (
+													<FixturesByLeague
+														fixturesData={league.fixtures}
+														key={uuid()}
+													/>
+												)
+											}
+										})
+									)
+								})}
 							</div>
 						</div>
 					</div>

@@ -7,7 +7,7 @@ export default async function getStanding(
 ): Promise<Standing[]> {
 	const standing: Standing[] = []
 	// const url = `${process.env.DOMAIN}/standings?season=${year}&league=${leagueId}`
-	const url = `https://sergeikhvalko-football-app-back-fd5d.twc1.net/api/standings?season=${year}&league=${leagueId}`
+	const url = `https://sergeikhvalko-football-app-back-fd5d.twc1.net/standings?season=${year}&league=${leagueId}`
 
 	try {
 		const response = await fetch(url)
