@@ -7,10 +7,10 @@ export const revalidate = 60
 
 export default async function Home() {
 	// const [standingsData, filteredFixtures] = await Promise.all([await getStandings(), await getFixturesForLeagues()])
-	const initStandingsData: Standing[][] = await getStandings()
+	const standingsData: Standing[][] = await getStandings()
 	const filteredFixtures: AllFixtures[] = await getFixturesForLeagues()
 	const standingsDataStat: Standing[][] = JSON.parse(
-		JSON.stringify(initStandingsData),
+		JSON.stringify(standingsData),
 	)
 
 	standingsDataStat[0][0]?.league?.standings?.sort(
@@ -24,7 +24,7 @@ export default async function Home() {
 	return (
 		<main className="flex flex-col w-full justify-center items-center md:p-10">
 			<StandingsAndFixtures
-				initStandingsData={initStandingsData}
+				standingsData={standingsData}
 				filteredFixtures={filteredFixtures}
 				standingsDataStat={standingsDataStat}
 			/>

@@ -10,7 +10,7 @@ import {
 	StatMatch,
 } from '@/types'
 import Link from 'next/link'
-import { useEffect, useRef, useState, useLayoutEffect, memo } from 'react'
+import { useEffect, useRef, useState, useLayoutEffect } from 'react'
 import FixturesByLeague from './FixturesByLeague'
 import Image from 'next/image'
 import moment from 'moment'
@@ -18,46 +18,33 @@ import { TemplateStat } from './TemplateStat'
 import styles from './StandingsAndFixtures.module.scss'
 import { shortTeamNames } from '../../data/shortTeamNames'
 import { v4 as uuid } from 'uuid'
-import getStanding from '../../util/getStanding'
 
-export const StandingsAndFixtures = memo(function StandingsAndFixtures({
-	initStandingsData,
+export const StandingsAndFixtures = ({
+	standingsData,
 	filteredFixtures,
 	standingsDataStat,
 }: {
-	initStandingsData: Standing[][]
+	standingsData: Standing[][]
 	filteredFixtures: AllFixtures[]
 	standingsDataStat: Standing[][]
-}) {
-	console.log('33-----standingsData', initStandingsData)
+}) => {
+	console.log(standingsData)
 
-	const currentYear = moment().year()
-	const allSeasons = [2019, 2020, 2021, 2022, 2023, 2024]
-
-	const [standingsData, setInitStandingsData] =
-		useState<Standing[][]>(initStandingsData)
-	const [isLoading, setIsLoading] = useState<boolean>(false)
-	const [activeTabLeague, setActiveTabLeague] = useState<number>(0)
-	const [yearSeason, setYearSeason] = useState<number>(
-		allSeasons[allSeasons.length - 1],
-	)
-	const [activeTabSeason, setActiveTabSeason] = useState<number>(
-		allSeasons.length - 1,
-	)
-
+	const currentYear = moment().year() - 1
+	const countSeasons = standingsData[0].length - 1
+	const [year, setYear] = useState(0)
+	const [activeTab, setActiveTab] = useState(0)
+	const [activeTabYears, setActiveTabYears] = useState(countSeasons)
 	const [tabMatch, setTabMatch] = useState<string>('summary')
-	const [activeTabMatch, setActiveTabMatch] = useState<number>(0)
+	const [activeTabMatch, setActiveTabMatch] = useState(0)
 	const [tabMatchStat, setTabMatchStat] = useState<string>('summary')
-	const [activeTabMatchStat, setActiveTabMatchStat] = useState<number>(0)
-
+	const [activeTabMatchStat, setActiveTabMatchStat] = useState(0)
 	const [tabHalf, setTabHalf] = useState<string>('match')
-	const [activeTabHalf, setActiveTabHalf] = useState<number>(0)
+	const [activeTabHalf, setActiveTabHalf] = useState(0)
 	const [tabHalfStat, setTabHalfStat] = useState<string>('match')
-	const [activeTabHalfStat, setActiveTabHalfStat] = useState<number>(0)
-
-	const [tabStat, setTabStat] = useState<string>('corners')
-	const [activeTabStat, setActiveTabStat] = useState<number>(0)
-
+	const [activeTabHalfStat, setActiveTabHalfStat] = useState(0)
+	const [tabStat, setTabStat] = useState('corners')
+	const [activeTabStat, setActiveTabStat] = useState(0)
 	const menuRef = useRef<HTMLDivElement>(null)
 	const menuRefStat = useRef<HTMLDivElement>(null)
 
@@ -169,6 +156,7 @@ export const StandingsAndFixtures = memo(function StandingsAndFixtures({
 
 	const scrollToTab = (index: number) => {
 		const container = menuRef.current
+
 		if (container) {
 			const tab = container.children[index] as HTMLElement
 			tab?.scrollIntoView({
@@ -192,31 +180,16 @@ export const StandingsAndFixtures = memo(function StandingsAndFixtures({
 	}
 
 	const handleTabClick = (index: number) => {
-		// sortStats(
-		// 	tabStat,
-		// 	tabMatchStat,
-		// 	tabHalfStat,
-		// 	index,
-		// 	currentYear - yearSeason,
-		// )
-		if (!standingsData[index][currentYear - yearSeason]) {
-			setIsLoading(true)
-		}
-		setActiveTabLeague(index)
+		sortStats(tabStat, tabMatchStat, tabHalfStat, index, year)
+		setActiveTab(index)
 		scrollToTab(index)
 	}
+	useEffect(() => {
+		scrollToTab(activeTab)
+	}, [activeTab])
 
 	const handleTabClickStat = (index: number, name: string) => {
-		console.log(index)
-		console.log(name)
-
-		sortStats(
-			name,
-			tabMatchStat,
-			tabHalfStat,
-			activeTabLeague,
-			currentYear - yearSeason,
-		)
+		sortStats(name, tabMatchStat, tabHalfStat, activeTab, year)
 		if (name === 'productive_half') {
 			setTabHalf('match')
 		}
@@ -224,19 +197,18 @@ export const StandingsAndFixtures = memo(function StandingsAndFixtures({
 		setActiveTabStat(index)
 		scrollToTabStat(index)
 	}
+	useEffect(() => {
+		scrollToTabStat(activeTabStat)
+	}, [activeTabStat])
 
-	const handleTabClickSeason = (index: number, season: number) => {
-		if (!standingsData[activeTabLeague][currentYear - season]) {
-			setIsLoading(true)
-		}
-		setActiveTabSeason(index)
-		setYearSeason(season)
+	const handleTabClickYear = (index: number, year: number) => {
+		sortStats(tabStat, tabMatchStat, tabHalfStat, activeTab, year)
+		setYear(year)
+		setActiveTabYears(index)
 	}
 
 	const handleTabClickMatch = (match: string, index: number) => {
-		standingsData[activeTabLeague][
-			currentYear - yearSeason
-		].league.standings.sort(
+		standingsData[activeTab][year].league.standings.sort(
 			(a, b) =>
 				b.matches[match as keyof Matches][tabHalf as keyof Match].points -
 				a.matches[match as keyof Matches][tabHalf as keyof Match].points,
@@ -250,28 +222,21 @@ export const StandingsAndFixtures = memo(function StandingsAndFixtures({
 		tabStat: string,
 		index: number,
 	) => {
-		sortStats(
-			tabStat,
-			match,
-			tabHalfStat,
-			activeTabLeague,
-			currentYear - yearSeason,
-		)
+		sortStats(tabStat, match, tabHalfStat, activeTab, year)
+
 		setTabMatchStat(match)
 		setActiveTabMatchStat(index)
 	}
 
 	const handleMouseLeave = (name: string) => {
 		if (name === 'productive_half') {
-			// setTabHalfStat('match')
-			// setActiveTabHalfStat(0)
+			setTabHalfStat('match')
+			setActiveTabHalfStat(0)
 		}
 	}
 
 	const handleTabClickHalf = (half: string, index: number) => {
-		standingsData[activeTabLeague][
-			currentYear - yearSeason
-		].league.standings.sort(
+		standingsData[activeTab][year].league.standings.sort(
 			(a, b) =>
 				b.matches[tabMatch as keyof Matches][half as keyof Match].points -
 				a.matches[tabMatch as keyof Matches][half as keyof Match].points,
@@ -286,13 +251,7 @@ export const StandingsAndFixtures = memo(function StandingsAndFixtures({
 		half: string,
 		index: number,
 	) => {
-		sortStats(
-			tabStat,
-			tabMatchStat,
-			half,
-			activeTabLeague,
-			currentYear - yearSeason,
-		)
+		sortStats(tabStat, tabMatchStat, half, activeTab, year)
 		setTabHalfStat(half)
 		setActiveTabHalfStat(index)
 	}
@@ -321,50 +280,7 @@ export const StandingsAndFixtures = memo(function StandingsAndFixtures({
 				containerStat.removeEventListener('wheel', handleWheel)
 			}
 		}
-	}, [activeTabLeague])
-
-	const fetchSeasonForLeague = async () => {
-		const res = await getStanding(
-			standingsData[activeTabLeague][0].league.name,
-			standingsData[activeTabLeague][0].league.id,
-			yearSeason,
-		)
-		return res[0]
-	}
-
-	useEffect(() => {
-		const fetchSeason = () => {
-			if (!standingsData[activeTabLeague][currentYear - yearSeason]) {
-				fetchSeasonForLeague().then((res: Standing) => {
-					if (!res) {
-						fetchSeason()
-					} else {
-						setInitStandingsData((standingsData) => {
-							standingsData[activeTabLeague][currentYear - yearSeason] = res
-							standingsDataStat[activeTabLeague][currentYear - yearSeason] =
-								JSON.parse(JSON.stringify(res))
-							sortStats(
-								tabStat,
-								tabMatchStat,
-								tabHalfStat,
-								activeTabLeague,
-								currentYear - yearSeason,
-							)
-							return standingsData
-						})
-						setIsLoading(false)
-					}
-				})
-			}
-			handleTabClick(activeTabLeague)
-		}
-
-		fetchSeason()
-	}, [yearSeason, activeTabLeague])
-
-	// useEffect(() => {
-	// 	scrollToTab(activeTabLeague)
-	// }, [activeTabLeague])
+	}, [activeTab])
 
 	return (
 		<div className="flex flex-col w-full max-w-7xl bg-gradient-to-br from-sky-800/75 to-sky-800/25 lg:flex-row lg:items-start">
@@ -377,13 +293,13 @@ export const StandingsAndFixtures = memo(function StandingsAndFixtures({
 								<button
 									key={uuid()}
 									className={`flex justify-center items-center shrink-0 p-4 rounded-lg bg-${
-										item[0] && item[0].league?.flag
+										item[year].league?.flag
 									}
-								${i === activeTabLeague ? 'opacity-100' : 'bg-black/100 opacity-50'}`}
+								${i === activeTab ? 'opacity-100' : 'bg-black/100 opacity-50'}`}
 									onClick={() => handleTabClick(i)}
 								>
 									<Image
-										src={item[0] ? item[0].league?.logo : ''}
+										src={item[year].league?.logo}
 										alt="teamLogo"
 										width={70}
 										height={60}
@@ -392,17 +308,20 @@ export const StandingsAndFixtures = memo(function StandingsAndFixtures({
 							))}
 						</div>
 						<div className="flex justify-center w-full gap-2">
-							{allSeasons.map((season, i) => (
-								<button
-									key={uuid()}
-									className={`mt-3 w-full flex justify-center items-center p-2 rounded-[8px]
-										${i === activeTabSeason ? 'opacity-100 bg-red-800' : 'bg-gray-950 opacity-50'}`}
-									onClick={() => handleTabClickSeason(i, season)}
-									disabled={isLoading}
-								>
-									{season}
-								</button>
-							))}
+							{standingsData[0]
+								.map((item, index, array) => array[array.length - 1 - index])
+								.map((season, j) => (
+									<button
+										key={uuid()}
+										className={`mt-3 w-full flex justify-center items-center p-2 rounded-[8px]
+										${j === activeTabYears ? 'opacity-100 bg-red-800' : 'bg-gray-950 opacity-50'}`}
+										onClick={() =>
+											handleTabClickYear(j, currentYear - season.league.season)
+										}
+									>
+										{season.league?.season}
+									</button>
+								))}
 						</div>
 
 						<div className="flex self-start gap-2">
@@ -425,8 +344,7 @@ export const StandingsAndFixtures = memo(function StandingsAndFixtures({
 								))}
 						</div>
 						<div className="flex self-start gap-2">
-							{standingsData[0][0] &&
-								standingsData[0][0].league?.standings[0].matches.summary &&
+							{standingsData[0][0].league?.standings[0].matches.summary &&
 								Object.keys(
 									standingsData[0][0].league.standings[0].matches.summary,
 								).map((half, i) => (
@@ -453,30 +371,25 @@ export const StandingsAndFixtures = memo(function StandingsAndFixtures({
 									key={uuid()}
 									className="flex flex-col justify-center items-center flex-shrink-0 w-full snap-center"
 								>
-									{isLoading ? (
-										'Loading...'
-									) : (
-										<div className="flex flex-col justify-between w-full py-2">
-											<div className="flex w-full p-1">
-												<div className="w-1/12"></div>
-												<div className="w-3/12"></div>
-												<div className="w-6/12 flex justify-evenly">
-													<div className="w-full text-center">M</div>
-													<div className="w-full text-center">W</div>
-													<div className="w-full text-center">D</div>
-													<div className="w-full text-center">L</div>
-													<div className="w-full text-center font-bold">P</div>
-													<div className="w-full text-center">GF</div>
-													<div className="w-full text-center">GA</div>
-													<div className="w-full text-center">GD</div>
-												</div>
-												<div className="w-2/12 text-center">Form</div>
+									<div className="flex flex-col justify-between w-full py-2">
+										<div className="flex w-full p-1">
+											<div className="w-1/12"></div>
+											<div className="w-3/12"></div>
+											<div className="w-6/12 flex justify-evenly">
+												<div className="w-full text-center">M</div>
+												<div className="w-full text-center">W</div>
+												<div className="w-full text-center">D</div>
+												<div className="w-full text-center">L</div>
+												<div className="w-full text-center font-bold">P</div>
+												<div className="w-full text-center">GF</div>
+												<div className="w-full text-center">GA</div>
+												<div className="w-full text-center">GD</div>
 											</div>
-											{responseData[currentYear - yearSeason]?.league?.standings
-												?.length &&
-												responseData[
-													currentYear - yearSeason
-												].league.standings.map((team: oneTeam, j) => (
+											<div className="w-2/12 text-center">Form</div>
+										</div>
+										{responseData[year].league.standings.length &&
+											responseData[year].league.standings.map(
+												(team: oneTeam, j) => (
 													<Link
 														href={`/team/${team.id}`}
 														key={uuid()}
@@ -586,9 +499,9 @@ export const StandingsAndFixtures = memo(function StandingsAndFixtures({
 																	))}
 														</div>
 													</Link>
-												))}
-										</div>
-									)}
+												),
+											)}
+									</div>
 								</div>
 							))}
 						</div>
@@ -597,10 +510,9 @@ export const StandingsAndFixtures = memo(function StandingsAndFixtures({
 					<div className="flex flex-col w-full justify-center items-center">
 						<div className="p-2 font-bold">STATISTICS STANDING</div>
 						<div className="flex justify-start w-full gap-2 overflow-auto">
-							{standingsData[activeTabLeague][currentYear - yearSeason] &&
+							{standingsData[activeTab][year].league.standings.length &&
 								Object.keys(
-									standingsData[activeTabLeague][currentYear - yearSeason]
-										.league.standings[0].statistics,
+									standingsData[activeTab][year].league.standings[0].statistics,
 								).map((name, i) => (
 									<button
 										key={uuid()}
@@ -624,17 +536,20 @@ export const StandingsAndFixtures = memo(function StandingsAndFixtures({
 								))}
 						</div>
 						<div className="flex justify-center w-full gap-2">
-							{allSeasons.map((season, i) => (
-								<button
-									key={uuid()}
-									className={`mt-3 w-full flex justify-center items-center p-2 rounded-[8px]
-										${i === activeTabSeason ? 'opacity-100 bg-red-800' : 'bg-gray-950 opacity-50'}`}
-									onClick={() => handleTabClickSeason(i, season)}
-									disabled={isLoading}
-								>
-									{season}
-								</button>
-							))}
+							{standingsData[0]
+								.map((item, index, array) => array[array.length - 1 - index])
+								.map((season, j) => (
+									<button
+										key={uuid()}
+										className={`mt-3 w-full flex justify-center items-center p-2 rounded-[8px]
+										${j === activeTabYears ? 'opacity-100 bg-red-800' : 'bg-gray-950 opacity-50'}`}
+										onClick={() =>
+											handleTabClickYear(j, currentYear - season.league.season)
+										}
+									>
+										{season.league.season}
+									</button>
+								))}
 						</div>
 						<div className="flex self-start gap-2">
 							{standingsData[0][0].league.standings[0].matches &&
@@ -687,10 +602,10 @@ export const StandingsAndFixtures = memo(function StandingsAndFixtures({
 							ref={menuRefStat}
 							className="flex w-full overflow-x-hidden snap-x scrollbar-none scroll-smooth text-xs md:text-base lg:text-lg"
 						>
-							{standingsDataStat[activeTabLeague][currentYear - yearSeason] &&
+							{standingsDataStat[activeTab][year].league.standings.length &&
 								Object.keys(
-									standingsDataStat[activeTabLeague][currentYear - yearSeason]
-										.league.standings[0].statistics,
+									standingsDataStat[activeTab][year].league.standings[0]
+										.statistics,
 								).map((stat: string, i) => (
 									<div
 										key={uuid()}
@@ -698,449 +613,448 @@ export const StandingsAndFixtures = memo(function StandingsAndFixtures({
 									>
 										<div className="flex flex-col justify-between w-full py-2">
 											<TemplateStat stat={stat} half={tabHalfStat} />
-											{standingsDataStat[activeTabLeague][
-												currentYear - yearSeason
-											].league.standings.length &&
-												standingsDataStat[activeTabLeague][
-													currentYear - yearSeason
-												].league.standings.map((team: oneTeam, j: number) => (
-													<Link
-														href={`/team/${team.id}`}
-														key={uuid()}
-														className={`flex w-full p-1 hover:bg-red-800/50
+											{standingsDataStat[activeTab][year].league.standings
+												.length &&
+												standingsDataStat[activeTab][year].league.standings.map(
+													(team: oneTeam, j: number) => (
+														<Link
+															href={`/team/${team.id}`}
+															key={uuid()}
+															className={`flex w-full p-1 hover:bg-red-800/50
 											${j % 2 === 0 ? 'bg-black/40' : ''}`}
-													>
-														<div className="flex justify-center items-center w-1/12 px-2">
-															{j + 1}
-														</div>
-														<div className="flex items-center w-3/12 text-xs md:text-base lg:text-lg">
-															{shortTeamNames[team.name]}
-														</div>
-														<div className="flex justify-center items-center w-8/12">
-															<div className="w-full text-center">
-																{tabStat !== 'productive_half'
-																	? team.statistics[
-																			tabStat as keyof Statistics
-																	  ][tabMatchStat as keyof StatMatches][
-																			tabHalfStat as keyof StatMatch
-																	  ].matches
-																	: team.statistics[
-																			tabStat as keyof Statistics
-																	  ][tabMatchStat as keyof StatMatches][
-																			'match'
-																	  ].matches}
+														>
+															<div className="flex justify-center items-center w-1/12 px-2">
+																{j + 1}
 															</div>
-															{stat === 'corners' && (
-																<>
-																	<div className="w-full text-center">
-																		{
-																			team.statistics[
+															<div className="flex items-center w-3/12 text-xs md:text-base lg:text-lg">
+																{shortTeamNames[team.name]}
+															</div>
+															<div className="flex justify-center items-center w-8/12">
+																<div className="w-full text-center">
+																	{tabStat !== 'productive_half'
+																		? team.statistics[
 																				tabStat as keyof Statistics
-																			][tabMatchStat as keyof StatMatches][
+																		  ][tabMatchStat as keyof StatMatches][
 																				tabHalfStat as keyof StatMatch
-																			].corner_win
-																		}
-																	</div>
-																	<div className="w-full text-center">
-																		{
-																			team.statistics[
+																		  ].matches
+																		: team.statistics[
 																				tabStat as keyof Statistics
-																			][tabMatchStat as keyof StatMatches][
-																				tabHalfStat as keyof StatMatch
-																			].corner_draw
-																		}
-																	</div>
-																	<div className="w-full text-center">
-																		{
-																			team.statistics[
-																				tabStat as keyof Statistics
-																			][tabMatchStat as keyof StatMatches][
-																				tabHalfStat as keyof StatMatch
-																			].corner_lose
-																		}
-																	</div>
-																	<div className="w-full text-center">
-																		{tabHalfStat === 'match'
-																			? team.statistics[
-																					tabStat as keyof Statistics
-																			  ][tabMatchStat as keyof StatMatches][
-																					tabHalfStat as keyof StatMatch
-																			  ].corner_under_8_5
-																			: team.statistics[
-																					tabStat as keyof Statistics
-																			  ][tabMatchStat as keyof StatMatches][
-																					tabHalfStat as keyof StatMatch
-																			  ].corner_under_3_5}
-																	</div>
-																	<div className="w-full text-center">
-																		{tabHalfStat === 'match'
-																			? team.statistics[
-																					tabStat as keyof Statistics
-																			  ][tabMatchStat as keyof StatMatches][
-																					tabHalfStat as keyof StatMatch
-																			  ].corner_under_9_5
-																			: team.statistics[
-																					tabStat as keyof Statistics
-																			  ][tabMatchStat as keyof StatMatches][
-																					tabHalfStat as keyof StatMatch
-																			  ].corner_under_4_5}
-																	</div>
-																	<div className="w-full text-center">
-																		{tabHalfStat === 'match'
-																			? team.statistics[
-																					tabStat as keyof Statistics
-																			  ][tabMatchStat as keyof StatMatches][
-																					tabHalfStat as keyof StatMatch
-																			  ].corner_over_9_5
-																			: team.statistics[
-																					tabStat as keyof Statistics
-																			  ][tabMatchStat as keyof StatMatches][
-																					tabHalfStat as keyof StatMatch
-																			  ].corner_over_4_5}
-																	</div>
-																	<div className="w-full text-center">
-																		{tabHalfStat === 'match'
-																			? team.statistics[
-																					tabStat as keyof Statistics
-																			  ][tabMatchStat as keyof StatMatches][
-																					tabHalfStat as keyof StatMatch
-																			  ].corner_over_10_5
-																			: team.statistics[
-																					tabStat as keyof Statistics
-																			  ][tabMatchStat as keyof StatMatches][
-																					tabHalfStat as keyof StatMatch
-																			  ].corner_over_5_5}
-																	</div>
-																	<div className="w-full text-center">
-																		{tabHalfStat === 'match'
-																			? team.statistics[
-																					tabStat as keyof Statistics
-																			  ][tabMatchStat as keyof StatMatches][
-																					tabHalfStat as keyof StatMatch
-																			  ].corner_over_11_5
-																			: team.statistics[
-																					tabStat as keyof Statistics
-																			  ][tabMatchStat as keyof StatMatches][
-																					tabHalfStat as keyof StatMatch
-																			  ].corner_over_6_5}
-																	</div>
-																</>
-															)}
-															{stat === 'yellow_cards' && (
-																<>
-																	<div className="w-full text-center">
-																		{
-																			team.statistics[
-																				tabStat as keyof Statistics
-																			][tabMatchStat as keyof StatMatches][
-																				tabHalfStat as keyof StatMatch
-																			].yellow_win
-																		}
-																	</div>
-																	<div className="w-full text-center">
-																		{
-																			team.statistics[
-																				tabStat as keyof Statistics
-																			][tabMatchStat as keyof StatMatches][
-																				tabHalfStat as keyof StatMatch
-																			].yellow_draw
-																		}
-																	</div>
-																	<div className="w-full text-center">
-																		{
-																			team.statistics[
-																				tabStat as keyof Statistics
-																			][tabMatchStat as keyof StatMatches][
-																				tabHalfStat as keyof StatMatch
-																			].yellow_lose
-																		}
-																	</div>
-																	<div className="w-full text-center">
-																		{tabHalfStat === 'match'
-																			? team.statistics[
-																					tabStat as keyof Statistics
-																			  ][tabMatchStat as keyof StatMatches][
-																					tabHalfStat as keyof StatMatch
-																			  ].yellow_under_2_5
-																			: team.statistics[
-																					tabStat as keyof Statistics
-																			  ][tabMatchStat as keyof StatMatches][
-																					tabHalfStat as keyof StatMatch
-																			  ].yellow_under_0_5}
-																	</div>
-																	<div className="w-full text-center">
-																		{tabHalfStat === 'match'
-																			? team.statistics[
-																					tabStat as keyof Statistics
-																			  ][tabMatchStat as keyof StatMatches][
-																					tabHalfStat as keyof StatMatch
-																			  ].yellow_under_3_5
-																			: team.statistics[
-																					tabStat as keyof Statistics
-																			  ][tabMatchStat as keyof StatMatches][
-																					tabHalfStat as keyof StatMatch
-																			  ].yellow_under_1_5}
-																	</div>
-																	<div className="w-full text-center">
-																		{tabHalfStat === 'match'
-																			? team.statistics[
-																					tabStat as keyof Statistics
-																			  ][tabMatchStat as keyof StatMatches][
-																					tabHalfStat as keyof StatMatch
-																			  ].yellow_over_3_5
-																			: team.statistics[
-																					tabStat as keyof Statistics
-																			  ][tabMatchStat as keyof StatMatches][
-																					tabHalfStat as keyof StatMatch
-																			  ].yellow_over_1_5}
-																	</div>
-																	<div className="w-full text-center">
-																		{tabHalfStat === 'match'
-																			? team.statistics[
-																					tabStat as keyof Statistics
-																			  ][tabMatchStat as keyof StatMatches][
-																					tabHalfStat as keyof StatMatch
-																			  ].yellow_over_4_5
-																			: team.statistics[
-																					tabStat as keyof Statistics
-																			  ][tabMatchStat as keyof StatMatches][
-																					tabHalfStat as keyof StatMatch
-																			  ].yellow_over_2_5}
-																	</div>
-																	<div className="w-full text-center">
-																		{tabHalfStat === 'match'
-																			? team.statistics[
-																					tabStat as keyof Statistics
-																			  ][tabMatchStat as keyof StatMatches][
-																					tabHalfStat as keyof StatMatch
-																			  ].yellow_over_5_5
-																			: team.statistics[
-																					tabStat as keyof Statistics
-																			  ][tabMatchStat as keyof StatMatches][
-																					tabHalfStat as keyof StatMatch
-																			  ].yellow_over_3_5}
-																	</div>
-																</>
-															)}
-															{stat === 'total' && (
-																<>
-																	<div className="w-full text-center">
-																		{
-																			team.statistics[
-																				tabStat as keyof Statistics
-																			][tabMatchStat as keyof StatMatches][
-																				tabHalfStat as keyof StatMatch
-																			].total_win
-																		}
-																	</div>
-																	<div className="w-full text-center">
-																		{
-																			team.statistics[
-																				tabStat as keyof Statistics
-																			][tabMatchStat as keyof StatMatches][
-																				tabHalfStat as keyof StatMatch
-																			].total_draw
-																		}
-																	</div>
-																	<div className="w-full text-center">
-																		{
-																			team.statistics[
-																				tabStat as keyof Statistics
-																			][tabMatchStat as keyof StatMatches][
-																				tabHalfStat as keyof StatMatch
-																			].total_lose
-																		}
-																	</div>
-																	<div className="w-full text-center">
-																		{tabHalfStat === 'match'
-																			? team.statistics[
-																					tabStat as keyof Statistics
-																			  ][tabMatchStat as keyof StatMatches][
-																					tabHalfStat as keyof StatMatch
-																			  ].total_under_1_5
-																			: team.statistics[
-																					tabStat as keyof Statistics
-																			  ][tabMatchStat as keyof StatMatches][
-																					tabHalfStat as keyof StatMatch
-																			  ].total_under_0_5}
-																	</div>
-																	<div className="w-full text-center">
-																		{tabHalfStat === 'match'
-																			? team.statistics[
-																					tabStat as keyof Statistics
-																			  ][tabMatchStat as keyof StatMatches][
-																					tabHalfStat as keyof StatMatch
-																			  ].total_under_2_5
-																			: team.statistics[
-																					tabStat as keyof Statistics
-																			  ][tabMatchStat as keyof StatMatches][
-																					tabHalfStat as keyof StatMatch
-																			  ].total_under_1_5}
-																	</div>
-																	<div className="w-full text-center">
-																		{tabHalfStat === 'match'
-																			? team.statistics[
-																					tabStat as keyof Statistics
-																			  ][tabMatchStat as keyof StatMatches][
-																					tabHalfStat as keyof StatMatch
-																			  ].total_over_2_5
-																			: team.statistics[
-																					tabStat as keyof Statistics
-																			  ][tabMatchStat as keyof StatMatches][
-																					tabHalfStat as keyof StatMatch
-																			  ].total_over_0_5}
-																	</div>
-																	<div className="w-full text-center">
-																		{tabHalfStat === 'match'
-																			? team.statistics[
-																					tabStat as keyof Statistics
-																			  ][tabMatchStat as keyof StatMatches][
-																					tabHalfStat as keyof StatMatch
-																			  ].total_over_3_5
-																			: team.statistics[
-																					tabStat as keyof Statistics
-																			  ][tabMatchStat as keyof StatMatches][
-																					tabHalfStat as keyof StatMatch
-																			  ].total_over_1_5}
-																	</div>
-																	<div className="w-full text-center">
-																		{tabHalfStat === 'match'
-																			? team.statistics[
-																					tabStat as keyof Statistics
-																			  ][tabMatchStat as keyof StatMatches][
-																					tabHalfStat as keyof StatMatch
-																			  ].total_over_4_5
-																			: team.statistics[
-																					tabStat as keyof Statistics
-																			  ][tabMatchStat as keyof StatMatches][
-																					tabHalfStat as keyof StatMatch
-																			  ].total_over_2_5}
-																	</div>
-																</>
-															)}
-															{stat === 'individ_total' && (
-																<>
-																	<div className="w-full text-center">
-																		{
-																			team.statistics[
-																				tabStat as keyof Statistics
-																			][tabMatchStat as keyof StatMatches][
-																				tabHalfStat as keyof StatMatch
-																			].in_total_under_0_5
-																		}
-																	</div>
-																	<div className="w-full text-center">
-																		{
-																			team.statistics[
-																				tabStat as keyof Statistics
-																			][tabMatchStat as keyof StatMatches][
-																				tabHalfStat as keyof StatMatch
-																			].in_total_under_1_5
-																		}
-																	</div>
-																	<div className="w-full text-center">
-																		{
-																			team.statistics[
-																				tabStat as keyof Statistics
-																			][tabMatchStat as keyof StatMatches][
-																				tabHalfStat as keyof StatMatch
-																			].in_total_over_1_5
-																		}
-																	</div>
-																	<div className="w-full text-center">
-																		{
-																			team.statistics[
-																				tabStat as keyof Statistics
-																			][tabMatchStat as keyof StatMatches][
-																				tabHalfStat as keyof StatMatch
-																			].in_total_over_2_5
-																		}
-																	</div>
-																</>
-															)}
-															{stat === 'both_score' && (
-																<>
-																	<div className="w-full text-center">
-																		{
-																			team.statistics[
-																				tabStat as keyof Statistics
-																			][tabMatchStat as keyof StatMatches][
-																				tabHalfStat as keyof StatMatch
-																			].bs_yes
-																		}
-																	</div>
-																	<div className="w-full text-center">
-																		{
-																			team.statistics[
-																				tabStat as keyof Statistics
-																			][tabMatchStat as keyof StatMatches][
-																				tabHalfStat as keyof StatMatch
-																			].bs_no
-																		}
-																	</div>
-																	<div className="w-full text-center">
-																		{
-																			team.statistics[
-																				tabStat as keyof Statistics
-																			][tabMatchStat as keyof StatMatches][
-																				tabHalfStat as keyof StatMatch
-																			].bs_win
-																		}
-																	</div>
-																	<div className="w-full text-center">
-																		{
-																			team.statistics[
-																				tabStat as keyof Statistics
-																			][tabMatchStat as keyof StatMatches][
-																				tabHalfStat as keyof StatMatch
-																			].bs_draw
-																		}
-																	</div>
-																	<div className="w-full text-center">
-																		{
-																			team.statistics[
-																				tabStat as keyof Statistics
-																			][tabMatchStat as keyof StatMatches][
-																				tabHalfStat as keyof StatMatch
-																			].bs_lose
-																		}
-																	</div>
-																</>
-															)}
-															{stat === 'productive_half' && (
-																<>
-																	<div className="w-full text-center">
-																		{
-																			team.statistics[
-																				tabStat as keyof Statistics
-																			][tabMatchStat as keyof StatMatches][
+																		  ][tabMatchStat as keyof StatMatches][
 																				'match'
-																			].first_over_second
-																		}
-																	</div>
-																	<div className="w-full text-center">
-																		{
-																			team.statistics[
-																				tabStat as keyof Statistics
-																			][tabMatchStat as keyof StatMatches][
-																				'match'
-																			].first_equal_second
-																		}
-																	</div>
-																	<div className="w-full text-center">
-																		{
-																			team.statistics[
-																				tabStat as keyof Statistics
-																			][tabMatchStat as keyof StatMatches][
-																				'match'
-																			].second_over_first
-																		}
-																	</div>
-																</>
-															)}
-														</div>
-													</Link>
-												))}
+																		  ].matches}
+																</div>
+																{stat === 'corners' && (
+																	<>
+																		<div className="w-full text-center">
+																			{
+																				team.statistics[
+																					tabStat as keyof Statistics
+																				][tabMatchStat as keyof StatMatches][
+																					tabHalfStat as keyof StatMatch
+																				].corner_win
+																			}
+																		</div>
+																		<div className="w-full text-center">
+																			{
+																				team.statistics[
+																					tabStat as keyof Statistics
+																				][tabMatchStat as keyof StatMatches][
+																					tabHalfStat as keyof StatMatch
+																				].corner_draw
+																			}
+																		</div>
+																		<div className="w-full text-center">
+																			{
+																				team.statistics[
+																					tabStat as keyof Statistics
+																				][tabMatchStat as keyof StatMatches][
+																					tabHalfStat as keyof StatMatch
+																				].corner_lose
+																			}
+																		</div>
+																		<div className="w-full text-center">
+																			{tabHalfStat === 'match'
+																				? team.statistics[
+																						tabStat as keyof Statistics
+																				  ][tabMatchStat as keyof StatMatches][
+																						tabHalfStat as keyof StatMatch
+																				  ].corner_under_8_5
+																				: team.statistics[
+																						tabStat as keyof Statistics
+																				  ][tabMatchStat as keyof StatMatches][
+																						tabHalfStat as keyof StatMatch
+																				  ].corner_under_3_5}
+																		</div>
+																		<div className="w-full text-center">
+																			{tabHalfStat === 'match'
+																				? team.statistics[
+																						tabStat as keyof Statistics
+																				  ][tabMatchStat as keyof StatMatches][
+																						tabHalfStat as keyof StatMatch
+																				  ].corner_under_9_5
+																				: team.statistics[
+																						tabStat as keyof Statistics
+																				  ][tabMatchStat as keyof StatMatches][
+																						tabHalfStat as keyof StatMatch
+																				  ].corner_under_4_5}
+																		</div>
+																		<div className="w-full text-center">
+																			{tabHalfStat === 'match'
+																				? team.statistics[
+																						tabStat as keyof Statistics
+																				  ][tabMatchStat as keyof StatMatches][
+																						tabHalfStat as keyof StatMatch
+																				  ].corner_over_9_5
+																				: team.statistics[
+																						tabStat as keyof Statistics
+																				  ][tabMatchStat as keyof StatMatches][
+																						tabHalfStat as keyof StatMatch
+																				  ].corner_over_4_5}
+																		</div>
+																		<div className="w-full text-center">
+																			{tabHalfStat === 'match'
+																				? team.statistics[
+																						tabStat as keyof Statistics
+																				  ][tabMatchStat as keyof StatMatches][
+																						tabHalfStat as keyof StatMatch
+																				  ].corner_over_10_5
+																				: team.statistics[
+																						tabStat as keyof Statistics
+																				  ][tabMatchStat as keyof StatMatches][
+																						tabHalfStat as keyof StatMatch
+																				  ].corner_over_5_5}
+																		</div>
+																		<div className="w-full text-center">
+																			{tabHalfStat === 'match'
+																				? team.statistics[
+																						tabStat as keyof Statistics
+																				  ][tabMatchStat as keyof StatMatches][
+																						tabHalfStat as keyof StatMatch
+																				  ].corner_over_11_5
+																				: team.statistics[
+																						tabStat as keyof Statistics
+																				  ][tabMatchStat as keyof StatMatches][
+																						tabHalfStat as keyof StatMatch
+																				  ].corner_over_6_5}
+																		</div>
+																	</>
+																)}
+																{stat === 'yellow_cards' && (
+																	<>
+																		<div className="w-full text-center">
+																			{
+																				team.statistics[
+																					tabStat as keyof Statistics
+																				][tabMatchStat as keyof StatMatches][
+																					tabHalfStat as keyof StatMatch
+																				].yellow_win
+																			}
+																		</div>
+																		<div className="w-full text-center">
+																			{
+																				team.statistics[
+																					tabStat as keyof Statistics
+																				][tabMatchStat as keyof StatMatches][
+																					tabHalfStat as keyof StatMatch
+																				].yellow_draw
+																			}
+																		</div>
+																		<div className="w-full text-center">
+																			{
+																				team.statistics[
+																					tabStat as keyof Statistics
+																				][tabMatchStat as keyof StatMatches][
+																					tabHalfStat as keyof StatMatch
+																				].yellow_lose
+																			}
+																		</div>
+																		<div className="w-full text-center">
+																			{tabHalfStat === 'match'
+																				? team.statistics[
+																						tabStat as keyof Statistics
+																				  ][tabMatchStat as keyof StatMatches][
+																						tabHalfStat as keyof StatMatch
+																				  ].yellow_under_2_5
+																				: team.statistics[
+																						tabStat as keyof Statistics
+																				  ][tabMatchStat as keyof StatMatches][
+																						tabHalfStat as keyof StatMatch
+																				  ].yellow_under_0_5}
+																		</div>
+																		<div className="w-full text-center">
+																			{tabHalfStat === 'match'
+																				? team.statistics[
+																						tabStat as keyof Statistics
+																				  ][tabMatchStat as keyof StatMatches][
+																						tabHalfStat as keyof StatMatch
+																				  ].yellow_under_3_5
+																				: team.statistics[
+																						tabStat as keyof Statistics
+																				  ][tabMatchStat as keyof StatMatches][
+																						tabHalfStat as keyof StatMatch
+																				  ].yellow_under_1_5}
+																		</div>
+																		<div className="w-full text-center">
+																			{tabHalfStat === 'match'
+																				? team.statistics[
+																						tabStat as keyof Statistics
+																				  ][tabMatchStat as keyof StatMatches][
+																						tabHalfStat as keyof StatMatch
+																				  ].yellow_over_3_5
+																				: team.statistics[
+																						tabStat as keyof Statistics
+																				  ][tabMatchStat as keyof StatMatches][
+																						tabHalfStat as keyof StatMatch
+																				  ].yellow_over_1_5}
+																		</div>
+																		<div className="w-full text-center">
+																			{tabHalfStat === 'match'
+																				? team.statistics[
+																						tabStat as keyof Statistics
+																				  ][tabMatchStat as keyof StatMatches][
+																						tabHalfStat as keyof StatMatch
+																				  ].yellow_over_4_5
+																				: team.statistics[
+																						tabStat as keyof Statistics
+																				  ][tabMatchStat as keyof StatMatches][
+																						tabHalfStat as keyof StatMatch
+																				  ].yellow_over_2_5}
+																		</div>
+																		<div className="w-full text-center">
+																			{tabHalfStat === 'match'
+																				? team.statistics[
+																						tabStat as keyof Statistics
+																				  ][tabMatchStat as keyof StatMatches][
+																						tabHalfStat as keyof StatMatch
+																				  ].yellow_over_5_5
+																				: team.statistics[
+																						tabStat as keyof Statistics
+																				  ][tabMatchStat as keyof StatMatches][
+																						tabHalfStat as keyof StatMatch
+																				  ].yellow_over_3_5}
+																		</div>
+																	</>
+																)}
+																{stat === 'total' && (
+																	<>
+																		<div className="w-full text-center">
+																			{
+																				team.statistics[
+																					tabStat as keyof Statistics
+																				][tabMatchStat as keyof StatMatches][
+																					tabHalfStat as keyof StatMatch
+																				].total_win
+																			}
+																		</div>
+																		<div className="w-full text-center">
+																			{
+																				team.statistics[
+																					tabStat as keyof Statistics
+																				][tabMatchStat as keyof StatMatches][
+																					tabHalfStat as keyof StatMatch
+																				].total_draw
+																			}
+																		</div>
+																		<div className="w-full text-center">
+																			{
+																				team.statistics[
+																					tabStat as keyof Statistics
+																				][tabMatchStat as keyof StatMatches][
+																					tabHalfStat as keyof StatMatch
+																				].total_lose
+																			}
+																		</div>
+																		<div className="w-full text-center">
+																			{tabHalfStat === 'match'
+																				? team.statistics[
+																						tabStat as keyof Statistics
+																				  ][tabMatchStat as keyof StatMatches][
+																						tabHalfStat as keyof StatMatch
+																				  ].total_under_1_5
+																				: team.statistics[
+																						tabStat as keyof Statistics
+																				  ][tabMatchStat as keyof StatMatches][
+																						tabHalfStat as keyof StatMatch
+																				  ].total_under_0_5}
+																		</div>
+																		<div className="w-full text-center">
+																			{tabHalfStat === 'match'
+																				? team.statistics[
+																						tabStat as keyof Statistics
+																				  ][tabMatchStat as keyof StatMatches][
+																						tabHalfStat as keyof StatMatch
+																				  ].total_under_2_5
+																				: team.statistics[
+																						tabStat as keyof Statistics
+																				  ][tabMatchStat as keyof StatMatches][
+																						tabHalfStat as keyof StatMatch
+																				  ].total_under_1_5}
+																		</div>
+																		<div className="w-full text-center">
+																			{tabHalfStat === 'match'
+																				? team.statistics[
+																						tabStat as keyof Statistics
+																				  ][tabMatchStat as keyof StatMatches][
+																						tabHalfStat as keyof StatMatch
+																				  ].total_over_2_5
+																				: team.statistics[
+																						tabStat as keyof Statistics
+																				  ][tabMatchStat as keyof StatMatches][
+																						tabHalfStat as keyof StatMatch
+																				  ].total_over_0_5}
+																		</div>
+																		<div className="w-full text-center">
+																			{tabHalfStat === 'match'
+																				? team.statistics[
+																						tabStat as keyof Statistics
+																				  ][tabMatchStat as keyof StatMatches][
+																						tabHalfStat as keyof StatMatch
+																				  ].total_over_3_5
+																				: team.statistics[
+																						tabStat as keyof Statistics
+																				  ][tabMatchStat as keyof StatMatches][
+																						tabHalfStat as keyof StatMatch
+																				  ].total_over_1_5}
+																		</div>
+																		<div className="w-full text-center">
+																			{tabHalfStat === 'match'
+																				? team.statistics[
+																						tabStat as keyof Statistics
+																				  ][tabMatchStat as keyof StatMatches][
+																						tabHalfStat as keyof StatMatch
+																				  ].total_over_4_5
+																				: team.statistics[
+																						tabStat as keyof Statistics
+																				  ][tabMatchStat as keyof StatMatches][
+																						tabHalfStat as keyof StatMatch
+																				  ].total_over_2_5}
+																		</div>
+																	</>
+																)}
+																{stat === 'individ_total' && (
+																	<>
+																		<div className="w-full text-center">
+																			{
+																				team.statistics[
+																					tabStat as keyof Statistics
+																				][tabMatchStat as keyof StatMatches][
+																					tabHalfStat as keyof StatMatch
+																				].in_total_under_0_5
+																			}
+																		</div>
+																		<div className="w-full text-center">
+																			{
+																				team.statistics[
+																					tabStat as keyof Statistics
+																				][tabMatchStat as keyof StatMatches][
+																					tabHalfStat as keyof StatMatch
+																				].in_total_under_1_5
+																			}
+																		</div>
+																		<div className="w-full text-center">
+																			{
+																				team.statistics[
+																					tabStat as keyof Statistics
+																				][tabMatchStat as keyof StatMatches][
+																					tabHalfStat as keyof StatMatch
+																				].in_total_over_1_5
+																			}
+																		</div>
+																		<div className="w-full text-center">
+																			{
+																				team.statistics[
+																					tabStat as keyof Statistics
+																				][tabMatchStat as keyof StatMatches][
+																					tabHalfStat as keyof StatMatch
+																				].in_total_over_2_5
+																			}
+																		</div>
+																	</>
+																)}
+																{stat === 'both_score' && (
+																	<>
+																		<div className="w-full text-center">
+																			{
+																				team.statistics[
+																					tabStat as keyof Statistics
+																				][tabMatchStat as keyof StatMatches][
+																					tabHalfStat as keyof StatMatch
+																				].bs_yes
+																			}
+																		</div>
+																		<div className="w-full text-center">
+																			{
+																				team.statistics[
+																					tabStat as keyof Statistics
+																				][tabMatchStat as keyof StatMatches][
+																					tabHalfStat as keyof StatMatch
+																				].bs_no
+																			}
+																		</div>
+																		<div className="w-full text-center">
+																			{
+																				team.statistics[
+																					tabStat as keyof Statistics
+																				][tabMatchStat as keyof StatMatches][
+																					tabHalfStat as keyof StatMatch
+																				].bs_win
+																			}
+																		</div>
+																		<div className="w-full text-center">
+																			{
+																				team.statistics[
+																					tabStat as keyof Statistics
+																				][tabMatchStat as keyof StatMatches][
+																					tabHalfStat as keyof StatMatch
+																				].bs_draw
+																			}
+																		</div>
+																		<div className="w-full text-center">
+																			{
+																				team.statistics[
+																					tabStat as keyof Statistics
+																				][tabMatchStat as keyof StatMatches][
+																					tabHalfStat as keyof StatMatch
+																				].bs_lose
+																			}
+																		</div>
+																	</>
+																)}
+																{stat === 'productive_half' && (
+																	<>
+																		<div className="w-full text-center">
+																			{
+																				team.statistics[
+																					tabStat as keyof Statistics
+																				][tabMatchStat as keyof StatMatches][
+																					'match'
+																				].first_over_second
+																			}
+																		</div>
+																		<div className="w-full text-center">
+																			{
+																				team.statistics[
+																					tabStat as keyof Statistics
+																				][tabMatchStat as keyof StatMatches][
+																					'match'
+																				].first_equal_second
+																			}
+																		</div>
+																		<div className="w-full text-center">
+																			{
+																				team.statistics[
+																					tabStat as keyof Statistics
+																				][tabMatchStat as keyof StatMatches][
+																					'match'
+																				].second_over_first
+																			}
+																		</div>
+																	</>
+																)}
+															</div>
+														</Link>
+													),
+												)}
 										</div>
 									</div>
 								))}
@@ -1155,9 +1069,9 @@ export const StandingsAndFixtures = memo(function StandingsAndFixtures({
 						<div className="w-full h-[180vh] flex flex-col justify-start items-center pb-5 overflow-y-auto">
 							{standingsData.map((leagueName, i) => {
 								return (
-									activeTabLeague === i &&
+									activeTab === i &&
 									filteredFixtures.map((league, j) => {
-										if (league.name === leagueName[0].league.name) {
+										if (league.name === leagueName[year].league.name) {
 											return (
 												<FixturesByLeague
 													fixturesData={league.fixtures}
@@ -1174,4 +1088,9 @@ export const StandingsAndFixtures = memo(function StandingsAndFixtures({
 			</div>
 		</div>
 	)
-})
+}
+// 'bg-black/100 opacity-50' // align-items: center;
+//background-color: var(--color-tabs-secondary-background-base);
+//border-radius: 8px;
+// color: var(--color-tabs-secondary-fill-base);
+// display: flex; // gap: 8px; // height: 28px; // padding: 0 12px;
