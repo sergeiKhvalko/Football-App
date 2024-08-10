@@ -10,7 +10,7 @@ import {
 	StatMatch,
 } from '@/types'
 import Link from 'next/link'
-import { useEffect, useRef, useState, useLayoutEffect } from 'react'
+import { useEffect, useRef, useState, useLayoutEffect, memo } from 'react'
 import FixturesByLeague from './FixturesByLeague'
 import Image from 'next/image'
 import moment from 'moment'
@@ -19,7 +19,7 @@ import styles from './StandingsAndFixtures.module.scss'
 import { shortTeamNames } from '../../data/shortTeamNames'
 import { v4 as uuid } from 'uuid'
 
-export const StandingsAndFixtures = ({
+export const StandingsAndFixtures = memo(function StandingsAndFixtures({
 	standingsData,
 	filteredFixtures,
 	standingsDataStat,
@@ -27,7 +27,7 @@ export const StandingsAndFixtures = ({
 	standingsData: Standing[][]
 	filteredFixtures: AllFixtures[]
 	standingsDataStat: Standing[][]
-}) => {
+}) {
 	const currentYear = moment().year() - 1
 	const countSeasons = standingsData[0].length - 1
 	const [year, setYear] = useState(0)
@@ -1086,7 +1086,7 @@ export const StandingsAndFixtures = ({
 			</div>
 		</div>
 	)
-}
+})
 // 'bg-black/100 opacity-50' // align-items: center;
 //background-color: var(--color-tabs-secondary-background-base);
 //border-radius: 8px;

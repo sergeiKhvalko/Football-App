@@ -65,7 +65,9 @@ export default async function getStandings(): Promise<Standing[][]> {
 				// }
 				seasons.push(data.response[0])
 			} catch (err) {
-				console.error(`Error fetching ${league.name} standings: ${err}`)
+				console.error(
+					`Error fetching ${league.name} standings: ${err}, url---${url}`,
+				)
 			}
 		}
 		standings.push(seasons)
