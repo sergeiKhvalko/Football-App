@@ -1,7 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-	output: 'export',
-	experimental: { serverActions: true, outputStandalone: true },
+	// output: 'export',
+	// distDir: 'dist',
+	// experimental: { outputStandalone: true },
 	reactStrictMode: false,
 	//optimizeFonts: false,
 	poweredByHeader: false,
@@ -11,14 +12,42 @@ const nextConfig = {
 	// 	APP_SERVER_URL: process.env.REACT_APP_SERVER_URL,
 	// },
 	images: {
-		domains: [
-			'loremflickr.com',
-			'www.aptronixindia.com',
-			'cdn1.ozone.ru',
-			'localhost',
-			'avatars.githubusercontent.com',
-			'cloudflare-ipfs.com',
-			'media.api-sports.io',
+		remotePatterns: [
+			{
+				protocol: 'https',
+				hostname: 'res.cloudinary.com',
+				pathname: '**',
+			},
+			{
+				protocol: 'https',
+				hostname: 'www.aptronixindia.com',
+				pathname: '**',
+			},
+			{
+				protocol: 'https',
+				hostname: 'cdn1.ozone.ru',
+				pathname: '**',
+			},
+			{
+				protocol: 'https',
+				hostname: 'localhost',
+				pathname: '**',
+			},
+			{
+				protocol: 'https',
+				hostname: 'avatars.githubusercontent.com',
+				pathname: '**',
+			},
+			{
+				protocol: 'https',
+				hostname: 'cloudflare-ipfs.com',
+				pathname: '**',
+			},
+			{
+				protocol: 'https',
+				hostname: 'media.api-sports.io',
+				pathname: '**',
+			},
 		],
 		// loader: 'custom',
 		// loaderFile: './my-loader.ts',

@@ -28,8 +28,6 @@ export const StandingsAndFixtures = ({
 	filteredFixtures: AllFixtures[]
 	standingsDataStat: Standing[][]
 }) => {
-	console.log(standingsData)
-
 	const currentYear = moment().year() - 1
 	const countSeasons = standingsData[0].length - 1
 	const [year, setYear] = useState(0)

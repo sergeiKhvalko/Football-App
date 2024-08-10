@@ -12,12 +12,13 @@ export default async function getFixturesForLeagues(): Promise<AllFixtures[]> {
 				league.name === 'RPL' ||
 				league.name === 'FNL' ||
 				league.name === 'Premier League' ||
-				// league.name === 'Championship' ||
-				// league.name === 'BundesLiga' ||
-				league.name === '2BundesLiga'
-				// league.name === 'Serie A' ||
-				// league.name === 'La Liga' ||
-				// league.name === 'Ligue1'
+				league.name === 'Championship' ||
+				league.name === 'BundesLiga' ||
+				league.name === '2BundesLiga' ||
+				league.name === 'Serie A' ||
+				league.name === 'La Liga' ||
+				league.name === 'Ligue1' ||
+				league.name === 'Primeira'
 			) {
 				fixturesLeague.push(league)
 			}
