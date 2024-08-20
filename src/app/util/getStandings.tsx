@@ -10,7 +10,7 @@ export default async function getStandings(): Promise<Standing[][]> {
 	if (month < 6) {
 		year = currentTime.year() - 1
 	} else {
-		year = currentTime.year() - 1
+		year = currentTime.year()
 	}
 
 	// const API_KEY: string = process.env.API_KEY as string
@@ -33,16 +33,16 @@ export default async function getStandings(): Promise<Standing[][]> {
 		{ name: 'RPL', id: 235 },
 		{ name: 'FNL', id: 236 },
 		{ name: 'EPL', id: 39 },
-		// { name: 'Championship', id: 40 },
-		{ name: 'BundesLiga', id: 78 },
-		// { name: '2BundesLiga', id: 79 },
+		{ name: 'Championship', id: 40 },
+		// { name: 'BundesLiga', id: 78 },
+		{ name: '2BundesLiga', id: 79 },
 		{ name: 'Serie A', id: 135 },
 		// { name: 'Serie B', id: 136 },
 		{ name: 'La Liga', id: 140 },
 		// { name: 'Segunda', id: 141 },
 		{ name: 'Ligue1', id: 61 },
 		// { name: 'Ligue2', id: 62 },
-		// { name: 'Primeira', id: 94 },
+		{ name: 'Primeira', id: 94 },
 		// { name: 'Eredivisie', id: 88 },
 		// { name: 'Belgium', id: 144 },
 		// { name: 'Turkey', id: 203 },
@@ -53,7 +53,7 @@ export default async function getStandings(): Promise<Standing[][]> {
 	for (let league of leagues) {
 		// const seasons: Standing[] = []
 		const seasons: any = []
-		for (let i = year; i > year - 5; i--) {
+		for (let i = year; i > year - 4; i--) {
 			const url = `${process.env.DOMAIN}/standings?season=${i}&league=${league.id}`
 
 			try {

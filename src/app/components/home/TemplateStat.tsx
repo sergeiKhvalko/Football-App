@@ -45,6 +45,45 @@ export const TemplateStat = ({
 				)
 			}
 
+		case 'individ_corners':
+			if (half === 'match') {
+				return (
+					<div className="flex w-full p-1">
+						<div className="w-1/12"></div>
+						<div className="w-3/12"></div>
+						<div className="w-8/12 flex justify-evenly">
+							<div className="w-full text-center">M</div>
+							<div className="w-full text-center text-green-400">All</div>
+							<div className="w-full text-center">u4.5</div>
+							<div className="w-full text-center">u5.5</div>
+							<div className="w-full text-center">o5.5</div>
+							<div className="w-full text-center">o6.5</div>
+							<div className="w-full text-center">o7.5</div>
+							<div className="w-full text-center">o8.5</div>
+							<div className="w-full text-center">o9.5</div>
+						</div>
+					</div>
+				)
+			} else {
+				return (
+					<div className="flex w-full p-1">
+						<div className="w-1/12"></div>
+						<div className="w-3/12"></div>
+						<div className="w-8/12 flex justify-evenly">
+							<div className="w-full text-center">M</div>
+							<div className="w-full text-center text-green-400">All</div>
+							<div className="w-full text-center">u2.5</div>
+							<div className="w-full text-center">u3.5</div>
+							<div className="w-full text-center">u4.5</div>
+							<div className="w-full text-center">o4.5</div>
+							<div className="w-full text-center">o5.5</div>
+							<div className="w-full text-center">o6.5</div>
+							<div className="w-full text-center">o7.5</div>
+						</div>
+					</div>
+				)
+			}
+
 		case 'yellow_cards':
 			if (half === 'match') {
 				return (
@@ -78,6 +117,43 @@ export const TemplateStat = ({
 							<div className="w-full text-center">u1.5</div>
 							<div className="w-full text-center">o1.5</div>
 							<div className="w-full text-center text-green-400">o2.5</div>
+							<div className="w-full text-center">o3.5</div>
+						</div>
+					</div>
+				)
+			}
+
+		case 'individ_yellow_cards':
+			if (half === 'match') {
+				return (
+					<div className="flex w-full p-1">
+						<div className="w-1/12"></div>
+						<div className="w-3/12"></div>
+						<div className="w-8/12 flex justify-evenly">
+							<div className="w-full text-center">M</div>
+							<div className="w-full text-center text-green-400">All</div>
+							<div className="w-full text-center">u0.5</div>
+							<div className="w-full text-center">u1.5</div>
+							<div className="w-full text-center">u2.5</div>
+							<div className="w-full text-center">o2.5</div>
+							<div className="w-full text-center">o3.5</div>
+							<div className="w-full text-center">o4.5</div>
+							<div className="w-full text-center">o5.5</div>
+						</div>
+					</div>
+				)
+			} else {
+				return (
+					<div className="flex w-full p-1">
+						<div className="w-1/12"></div>
+						<div className="w-3/12"></div>
+						<div className="w-8/12 flex justify-evenly">
+							<div className="w-full text-center">M</div>
+							<div className="w-full text-center text-green-400">All</div>
+							<div className="w-full text-center">u0.5</div>
+							<div className="w-full text-center">u1.5</div>
+							<div className="w-full text-center">o1.5</div>
+							<div className="w-full text-center">o2.5</div>
 							<div className="w-full text-center">o3.5</div>
 						</div>
 					</div>
@@ -137,6 +213,7 @@ export const TemplateStat = ({
 					</div>
 				</div>
 			)
+
 		case 'both_score':
 			return (
 				<div className="flex w-full p-1">
@@ -152,6 +229,7 @@ export const TemplateStat = ({
 					</div>
 				</div>
 			)
+
 		case 'productive_half':
 			return (
 				<div className="flex w-full p-1">
@@ -159,9 +237,23 @@ export const TemplateStat = ({
 					<div className="w-3/12"></div>
 					<div className="w-8/12 flex justify-evenly">
 						<div className="w-full text-center">M</div>
-						<div className="w-full text-center">1ov2</div>
+						<div className="w-full text-center text-green-400">1ov2</div>
 						<div className="w-full text-center">1eq2</div>
-						<div className="w-full text-center text-green-400">2ov1</div>
+						<div className="w-full text-center">2ov1</div>
+					</div>
+				</div>
+			)
+
+		case 'individ_productive_half':
+			return (
+				<div className="flex w-full p-1">
+					<div className="w-1/12"></div>
+					<div className="w-3/12"></div>
+					<div className="w-8/12 flex justify-evenly">
+						<div className="w-full text-center">M</div>
+						<div className="w-full text-center text-green-400">1ov2</div>
+						<div className="w-full text-center">1eq2</div>
+						<div className="w-full text-center">2ov1</div>
 					</div>
 				</div>
 			)

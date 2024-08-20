@@ -28,12 +28,15 @@ type oneTeam = {
 	statistics: Statistics
 }
 type Statistics = {
-	both_score: StatMatches
 	corners: StatMatches
-	individ_total: StatMatches
-	productive_half: StatMatches
-	total: StatMatches
+	individ_corners: StatMatches
 	yellow_cards: StatMatches
+	individ_yellow_cards: StatMatches
+	total: StatMatches
+	individ_total: StatMatches
+	both_score: StatMatches
+	productive_half: StatMatches
+	individ_productive_half: StatMatches
 }
 
 type Matches = {
@@ -66,13 +69,19 @@ type Stat = {
 	corner_win: number
 	corner_draw: number
 	corner_lose: number
+	corner_under_2_5: number
 	corner_under_3_5: number
 	corner_under_4_5: number
+	corner_under_5_5: number
+	corner_under_6_5: number
+	corner_under_7_5: number
+	corner_under_8_5: number
+	corner_under_9_5: number
 	corner_over_4_5: number
 	corner_over_5_5: number
 	corner_over_6_5: number
-	corner_under_8_5: number
-	corner_under_9_5: number
+	corner_over_7_5: number
+	corner_over_8_5: number
 	corner_over_9_5: number
 	corner_over_10_5: number
 	corner_over_11_5: number
