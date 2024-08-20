@@ -31,7 +31,7 @@ export default async function getStandings(): Promise<Standing[][]> {
 
 	const leagues = [
 		{ name: 'RPL', id: 235 },
-		{ name: 'FNL', id: 236 },
+		// { name: 'FNL', id: 236 },
 		{ name: 'EPL', id: 39 },
 		{ name: 'Championship', id: 40 },
 		// { name: 'BundesLiga', id: 78 },
@@ -59,10 +59,6 @@ export default async function getStandings(): Promise<Standing[][]> {
 			try {
 				const response = await fetch(url)
 				const data = await response.json()
-				// if (i === 2024 && league.id === 39) {
-				// 	seasons.push(epl2024[0])
-				// } else {
-				// }
 				seasons.push(data.response[0])
 			} catch (err) {
 				console.error(
