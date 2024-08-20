@@ -609,11 +609,19 @@ export const StandingsAndFixtures = memo(function StandingsAndFixtures({
 												? 'opacity-100 border-b-4 border-red-800'
 												: 'opacity-30'
 										}
-												${tabStat === 'productive_half' ? 'hidden' : ''}`}
+												${
+													tabStat === 'productive_half' ||
+													tabStat === 'individ_productive_half'
+														? 'hidden'
+														: ''
+												}`}
 										onClick={() =>
 											handleTabClickHalfStat(tabStat, tabMatchStat, halfStat, i)
 										}
-										disabled={tabStat === 'productive_half'}
+										disabled={
+											tabStat === 'productive_half' ||
+											tabStat === 'individ_productive_half'
+										}
 									>
 										{halfStat.replace('_', ' ')}
 									</button>
