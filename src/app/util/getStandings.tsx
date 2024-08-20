@@ -42,7 +42,7 @@ export default async function getStandings(): Promise<Standing[][]> {
 		// { name: 'Segunda', id: 141 },
 		{ name: 'Ligue1', id: 61 },
 		// { name: 'Ligue2', id: 62 },
-		{ name: 'Primeira', id: 94 },
+		// { name: 'Primeira', id: 94 },
 		// { name: 'Eredivisie', id: 88 },
 		// { name: 'Belgium', id: 144 },
 		// { name: 'Turkey', id: 203 },
