@@ -3,6 +3,7 @@ import getFixtureByFixtureId from '@/src/app/util/getFixtureByFixtureId'
 import Link from 'next/link'
 import Image from 'next/image'
 import LocalTime from '../../components/LocalTime'
+import getMatchesForMatchweek from '../../util/getMatchesForMatchweek'
 
 type PageProps = {
 	params: {
@@ -14,6 +15,15 @@ export default async function Match({ params }: PageProps) {
 	const fixtureByFixtureId: Fixture | undefined = await getFixtureByFixtureId(
 		parseInt(params.id),
 	)
+
+	const matchesWeek = await getMatchesForMatchweek(
+		fixtureByFixtureId!.league.season,
+		fixtureByFixtureId!.league.id,
+		Number(fixtureByFixtureId!.league.round.slice(16)),
+	)
+
+	// console.log('id ---', params.id, fixtureByFixtureId)
+	console.log('id ---', matchesWeek)
 
 	if (!fixtureByFixtureId) {
 		return (

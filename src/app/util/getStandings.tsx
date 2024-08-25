@@ -31,10 +31,10 @@ export default async function getStandings(): Promise<Standing[][]> {
 
 	const leagues = [
 		{ name: 'RPL', id: 235 },
-		// { name: 'FNL', id: 236 },
+		{ name: 'FNL', id: 236 },
 		{ name: 'EPL', id: 39 },
 		{ name: 'Championship', id: 40 },
-		// { name: 'BundesLiga', id: 78 },
+		{ name: 'BundesLiga', id: 78 },
 		{ name: '2BundesLiga', id: 79 },
 		{ name: 'Serie A', id: 135 },
 		// { name: 'Serie B', id: 136 },
@@ -42,7 +42,7 @@ export default async function getStandings(): Promise<Standing[][]> {
 		// { name: 'Segunda', id: 141 },
 		{ name: 'Ligue1', id: 61 },
 		// { name: 'Ligue2', id: 62 },
-		// { name: 'Primeira', id: 94 },
+		{ name: 'Primeira', id: 94 },
 		// { name: 'Eredivisie', id: 88 },
 		// { name: 'Belgium', id: 144 },
 		// { name: 'Turkey', id: 203 },
@@ -53,7 +53,7 @@ export default async function getStandings(): Promise<Standing[][]> {
 	for (let league of leagues) {
 		// const seasons: Standing[] = []
 		const seasons: any = []
-		for (let i = year; i > year - 4; i--) {
+		for (let i = year; i > year - 3; i--) {
 			const url = `${process.env.DOMAIN}/standings?season=${i}&league=${league.id}`
 
 			try {

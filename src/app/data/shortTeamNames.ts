@@ -187,6 +187,7 @@ export const shortTeamNames: shortTeamNamesType = {
 	Cremonese: 'Cremonese',
 	Monza: 'Monza',
 	Frosinone: 'Frosinone',
+	Como: 'Como',
 	Barcelona: 'Barcelona',
 	'Atl. Madrid': 'At Madrid',
 	'Ath Bilbao': 'At Bilbao',
